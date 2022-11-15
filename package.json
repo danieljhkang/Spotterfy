@@ -1,0 +1,20 @@
+{
+  "name": "spotterfy",
+  "version": "1.0.0",
+  "description": "A project by Rohan Balani, Daniel Kang, Ryan Lee, and Ken Yun",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danieljhkang/Spotterfy.git"
+  },
+  "author": "Rohan Balani, Daniel Kang, Ryan Lee, Ken Yun",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danieljhkang/Spotterfy/issues"
+  },
+  "homepage": "https://github.com/danieljhkang/Spotterfy#readme"
+}
