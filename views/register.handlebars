@@ -1,0 +1,21 @@
+<main>
+    <div class="form-container">
+        {{#if error}}
+        <div class="error-container">
+            {{error}}
+        </div>
+        {{else}}
+        <div class="hidden">
+            Filler text
+        </div>
+        {{/if}}
+        <form id="register-form" action="register" method="POST">
+            <label for="usernameInput">Username: </label>
+            <input type="text" id="usernameInput" name="usernameInput">
+            <label for="passwordInput">Password: </label>
+            <input type="password" id="passwordInput" name="passwordInput">
+            <button type="submit" class="register">Sign Up</button>
+        </form>
+    </div>
+    <p class="form-link-text">Already have an account? <a class="form-link" href="/login">Sign in</a></p>
+</main>
