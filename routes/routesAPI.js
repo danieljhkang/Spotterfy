@@ -7,12 +7,18 @@ const router = express.Router();
 
 router.route("/").get(async (req, res) => {
   //code here for GET
+  res.render("login", {
+    title: "Spotter-fy",
+  });
 });
 
 router
   .route("/login")
   .get(async (req, res) => {
     //code here for GET
+    res.render("login", {
+      title: "Spotter-fy",
+    });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -22,6 +28,9 @@ router
   .route("/register")
   .get(async (req, res) => {
     //code here for GET
+    res.render("register", {
+      title: "Spotter-fy",
+    });
   })
   .post(async (req, res) => {
     //code here for POST
@@ -29,12 +38,18 @@ router
 
 router.route("/profile").get(async (req, res) => {
   //code here for GET
+  res.render("profile", {
+    title: "Spotter-fy",
+  });
 });
 
 router
   .route("/reserve")
   .get(async (req, res) => {
     //code here for GET
+    res.render("reserve", {
+      title: "Spotter-fy",
+    });
   })
   .post(async (req, res) => {
     //code here for POST

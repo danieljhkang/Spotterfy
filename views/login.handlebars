@@ -1,21 +1,20 @@
-<main>
-    <div class="form-container">
-        {{#if error}}
-        <div class="error-container">
-            {{error}}
-        </div>
-        {{else}}
-        <div class="hidden">
-            Filler text
-        </div>
-        {{/if}}
-        <form id="login-form" action="login" method="POST">
-            <label for="usernameInput">Username: </label>
-            <input type="text" id="usernameInput" name="usernameInput">
-            <label for="passwordInput">Password: </label>
-            <input type="password" id="passwordInput" name="passwordInput">
-            <button type="submit" class="login">Sign In</button>
-        </form>
+<div class="form-container">
+  {{#if error}}
+    <div class="error-container">
+      {{error}}
     </div>
-    <p class="form-link-text">New to Spotterfy? <a class="form-link" href="/register">Create an account</a></p>
-</main>
+  {{else}}
+    <div class="hidden">
+      Filler text
+    </div>
+  {{/if}}
+  <form id="login-form" action="login" method="POST">
+    <label for="usernameInput">Username: </label>
+    <input type="text" id="usernameInput" name="usernameInput" />
+    <label for="passwordInput">Password: </label>
+    <input type="password" id="passwordInput" name="passwordInput" />
+    <button type="submit" class="login">Sign In</button>
+  </form>
+</div>
+<p class="form-link-text">New to Spotterfy?
+  <a class="form-link" href="/register">Create an account</a></p>
