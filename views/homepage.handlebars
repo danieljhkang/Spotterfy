@@ -1,0 +1,15 @@
+<main>
+    <ul>
+        {{#each users}}
+        <li class="user-in-list">
+            <h2>{{name}}</h2>
+            <p class="user-location">At {{location}}</p>
+            <p class="user-workouts">
+                {{#each workouts}}
+                {{this}}
+                {{/each}}
+            </p>
+        </li>
+        {{/each}}
+    </ul>
+</main>
