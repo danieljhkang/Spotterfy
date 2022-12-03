@@ -1,19 +1,23 @@
 <main>
      <form id="reservation-form">
-        <label for="startTimeInput">Start Time</label>
-        <input list="startTimes" id="startTimeInput" name="startTimeInput">
+        <label for="startTime">Start Time</label>
+        <input list="startTimes" id="startTime" name="startTime">
         <datalist id="startTimes">
             {{#each {{startTimes}}}}
             <option value="{{this}}">{{this}}</option>
             {{/each}}
         </datalist>
-        <label for="endTimeInput">End Time</label>
-        <input list="endTimes" id="endTimeInput" name="endTimeInput">
+        <label for="endTime">End Time</label>
+        <input list="endTimes" id="endTime" name="endTime">
         <datalist id="endTimes">
             {{#each {{endTimes}}}}
             <option value="{{this}}">{{this}}</option>
             {{/each}}
         </datalist>
+        <select id="location" name="location">
+            <option value="ucc">UCC Fitness Center</option>
+            <option value="schaefer">Schaefer Fitness Center</option>
+        </select>
         <button type="submit">Create Reservation</button>
      </form>
      <div id="hot-zones-graph"></div>
