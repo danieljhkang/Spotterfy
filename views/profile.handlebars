@@ -1,0 +1,21 @@
+<main>
+    <div id="user-info">
+        <h3>Name</h3>
+        <p>{{fullName}}</p>
+        <h3>Email</h3>
+        <p>{{email}}</p>
+        <h3>CWID</h3>
+        <p>{{cwid}}</p>
+    </div>
+    {{#if {{weeklyCheckins}}}}
+    <h2>Looks like you haven't checked in this week yet!</h2>
+    {{else}}
+    <h2>You've checked in {{weeklyCheckins}} times this week!</h2>
+    {{/if}}
+    
+    {{#if {{monthlyMissedReservations}}}}
+    <h2>You haven't missed a reservation this month!</h2>
+    {{else}}
+    <h2>You've missed {{monthlyMissedReservations}} reservations this month!</h2>
+    {{/if}}
+</main>
