@@ -23,6 +23,7 @@ const main = async () => {
   // await db.dropDatabase();
   const usersCollection = await users();
   const hotspotsCollection = await hotspots();
+  /* Checks if the hotspot collection exists, if not then creates from scratch to not overwrite previous data */
   const hotspotExists = await hotspotsCollection.findOne({day: "Sunday"});
   if(!hotspotExists){
     await hotspotsCollection.insertOne({day: "Sunday", weeksPast: 0, registeredAverage: [], currentRegistered: []});
