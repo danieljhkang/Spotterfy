@@ -1,6 +1,7 @@
-const mongoCollections = require("./../config/mongoCollections");
-const helpers = require("./../helpers");
+const mongoCollections = require("../config/mongoCollections");
+const helpers = require("../helpers");
 const users = mongoCollections.users;
+const hotspots = mongoCollections.hotspots;
 const { ObjectId } = require("mongodb");
 const connection = require("../config/mongoConnection");
 const bcrypt = require("bcryptjs");
