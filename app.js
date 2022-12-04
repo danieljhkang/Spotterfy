@@ -12,6 +12,33 @@ app.set("view engine", "handlebars");
 
 configRoutes(app);
 
+const connection = require('./config/mongoConnection');
+const collections = require('./config/mongoCollections');
+const users = collections.users;
+const hotspots = collections.hotspots;
+
+
+const main = async () => {
+  const db = await connection.dbConnection();
+  // await db.dropDatabase();
+  const usersCollection = await users();
+  const hotspotsCollection = await hotspots();
+  const hotspotExists = await hotspotsCollection.findOne({day: "Sunday"});
+  if(!hotspotExists){
+    await hotspotsCollection.insertOne({day: "Sunday", weeksPast: 0, registeredAverage: [], currentRegistered: []});
+    await hotspotsCollection.insertOne({day: "Monday", weeksPast: 0, registeredAverage: [], currentRegistered: []});
+    await hotspotsCollection.insertOne({day: "Tuesday", weeksPast: 0, registeredAverage: [], currentRegistered: []});
+    await hotspotsCollection.insertOne({day: "Wednesday", weeksPast: 0, registeredAverage: [], currentRegistered: []});
+    await hotspotsCollection.insertOne({day: "Thursday", weeksPast: 0, registeredAverage: [], currentRegistered: []});
+    await hotspotsCollection.insertOne({day: "Friday", weeksPast: 0, registeredAverage: [], currentRegistered: []});
+    await hotspotsCollection.insertOne({day: "Saturday", weeksPast: 0, registeredAverage: [], currentRegistered: []});
+  }
+  
+  await connection.closeConnection();
+};
+
+main();
+
 app.listen(3000, () => {
   console.log("We've now got a server!");
   console.log("Your routes will be running on http://localhost:3000");
