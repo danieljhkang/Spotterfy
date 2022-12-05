@@ -1,1 +1,27 @@
-/*This file should have CSS rulesets */
+* {
+    font-family: "Poppins", sans-serif;
+}
+
+form #login-form,
+form #register-form {
+    display: table;
+}
+
+form label {
+    display: table-cell;
+}
+
+form input {
+    display: table-cell;
+    width: 200px;
+    margin-bottom: 7px;
+}
+
+form button {
+    font-size: 15px;
+}
+
+form #classInput {
+    height: 20px;
+    margin-bottom: 7px;
+}
