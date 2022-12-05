@@ -3,9 +3,12 @@ const app = express();
 const configRoutes = require("./routes");
 const exphbs = require("express-handlebars");
 const session = require("express-session");
+const public = express.static(__dirname + '/public');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/public', public);
 
 app.engine("handlebars", exphbs.engine({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
