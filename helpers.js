@@ -138,7 +138,7 @@ const validUsername = async (username) => {
   // username should be a valid string (no empty spaces, no spaces in username and only alphanumeric characters) and at least 4 characters long
   if (typeof username !== "string" || username.trim().length === 0)
     throw "Username must be a non-empty string";
-  username = username.trim();
+  username = username.trim().toLowerCase;
   if (username.length < 4 || !/^[A-Za-z0-9]*$/.test(username))
     throw "Username must be alphanumeric and at least 4 characters";
 };
@@ -150,11 +150,12 @@ const validEmail = async (email) => {
   // email should be a valid string (no empty spaces, no spaces in email and only alphanumeric characters besides "@" and ".")
   if (typeof email !== "string" || email.trim().length === 0)
     throw "Email must be a non-empty string";
+  email = email.trim().toLowerCase;
   // split email at "@" to check for username and stevens email
   const splitEmail = email.split("@");
   if (splitEmail.length !== 2) throw "Please provide a valid Stevens email";
-  const username = splitEmail[0].toLowerCase;
-  const stevensEmail = splitEmail[1].toLowerCase;
+  const username = splitEmail[0];
+  const stevensEmail = splitEmail[1];
   try {
     const validUN = await validUsername(username);
   } catch (e) {
@@ -202,4 +203,8 @@ const validCWID = async (cwid) => {
 module.exports = {
   checkUserPassword,
   checkUserInfo,
+  validUsername,
+  validEmail,
+  validPW,
+  validCWID,
 };
