@@ -2,6 +2,13 @@
     font-family: "Poppins", sans-serif;
 }
 
+.error-container {
+    background-color: #f74d4d;
+    color: #fff;
+    border-radius: 5px;
+    width: fit-content;
+}
+
 form #login-form,
 form #register-form {
     display: table;
