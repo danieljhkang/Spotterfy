@@ -103,7 +103,7 @@ let checkUserPassword = (password) => {
 };
 
 //throws an error if the given input is not valid.
-const checkUserInfo = async (input) => {
+let checkUserInfo = (input) => {
   if (!input) {
     throw "You must supply a valid input!";
   }
@@ -114,9 +114,6 @@ const checkUserInfo = async (input) => {
   input = input.trim();
   if (input === "") {
     throw "input can't be empty spaces";
-  }
-  if (input.length < 4) {
-    throw "input length must be greater than 4";
   }
   if (input.includes(" ")) {
     throw "input can't contain empty spaces";
@@ -132,10 +129,10 @@ const checkUserInfo = async (input) => {
 
 /* CHECK USER INFO */
 // check username
-const validUsername = async (username) => {
+let validUsername = (username) => {
   // username must be supplied
   if (!username) throw "Please provide a username";
-  // username should be a valid string (no empty spaces, no spaces in username and only alphanumeric characters) and at least 4 characters long
+  // username should be a valid string (no empty spaces, no spaces in username and only alphanumeric characters)
   if (typeof username !== "string" || username.trim().length === 0)
     throw "Username must be a non-empty string";
   username = username.trim().toLowerCase;
@@ -144,20 +141,20 @@ const validUsername = async (username) => {
 };
 
 // check email
-const validEmail = async (email) => {
+let validEmail = (email) => {
   // email must be supplied
   if (!email) throw "Please provide email";
   // email should be a valid string (no empty spaces, no spaces in email and only alphanumeric characters besides "@" and ".")
   if (typeof email !== "string" || email.trim().length === 0)
     throw "Email must be a non-empty string";
-  email = email.trim().toLowerCase;
+  email = email.trim().toLowerCase();
   // split email at "@" to check for username and stevens email
-  const splitEmail = email.split("@");
+  const splitEmail = email.split('@');
   if (splitEmail.length !== 2) throw "Please provide a valid Stevens email";
   const username = splitEmail[0];
   const stevensEmail = splitEmail[1];
   try {
-    const validUN = await validUsername(username);
+    const validUN = checkUserInfo(username);
   } catch (e) {
     throw "Please provide a valid Stevens email";
   }
@@ -166,7 +163,7 @@ const validEmail = async (email) => {
 };
 
 // check password
-const validPW = async (password) => {
+let validPW = (password) => {
   // password must be supplied
   if (!password) throw "Please provide a password";
   // password must be a valid string (no empty spaces, no spaces but can be any other character including special characters) and at least 6 characters long
@@ -188,7 +185,7 @@ const validPW = async (password) => {
 };
 
 // check cwid
-const validCWID = async (cwid) => {
+const validCWID = (cwid) => {
   // cwid must be supplied
   if (!cwid) throw "Please provide CWID";
   // cwid should be a valid string (no empty spaces, no spaces in cwid, and only numbers) and only 8 characters long

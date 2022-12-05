@@ -7,12 +7,14 @@ const connection = require("../config/mongoConnection");
 const bcrypt = require("bcryptjs");
 const saltRounds = 10;
 
-//creates a user and adds it to the mongo database
+//creates a user and adds it to the mongo database, SETS VISIBILITY TO TRUE BY DEFAULT
 const createUser = async (firstName, lastName, email, cwid, year, password) => {
   // check user input
   helpers.checkUserInfo(firstName);
   helpers.checkUserInfo(lastName);
-  helpers.checkUserPassword(password)
+  helpers.validCWID(cwid);
+  helpers.validEmail(email);
+  helpers.validPW(password);
 
   // check if user already exists
   const userCollection = await users();
@@ -23,10 +25,10 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
   const hash = await bcrypt.hash(password, saltRounds);
 
   let newUser = { 
+    cwid: cwid,
     firstName: firstName, 
     lastName: lastName, 
     email: email, 
-    cwid: cwid,
     hashPassword: hash, 
     year: year, 
     visible: true, 
@@ -40,7 +42,6 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
   if (!insertUser.acknowledged || !insertUser.insertedId) {
     throw "Could not create user";
   }
-
   return { insertedUser: true };
 };
 

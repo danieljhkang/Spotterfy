@@ -19,10 +19,11 @@ const connection = require('./config/mongoConnection');
 const collections = require('./config/mongoCollections');
 const users = collections.users;
 const hotspots = collections.hotspots;
+const usersData = require('./data/users')
 
 
 const main = async () => {
-  const db = await connection.dbConnection();
+  // const db = await connection.dbConnection();
   // await db.dropDatabase();
   const usersCollection = await users();
   const hotspotsCollection = await hotspots();
@@ -37,8 +38,15 @@ const main = async () => {
     await hotspotsCollection.insertOne({day: "Friday", weeksPast: 0, registeredAverage: [], currentRegistered: []});
     await hotspotsCollection.insertOne({day: "Saturday", weeksPast: 0, registeredAverage: [], currentRegistered: []});
   }
+  // try{
+  //   var c = await usersData.createUser("Rohan", "Balani", "rbalani@stevens.edu", 87655321, "junior", "Rohan@1")
+  //   console.log(c)
+  // }catch(e)
+  // {
+  //   console.log(e)
+  // }
   
-  await connection.closeConnection();
+  // await connection.closeConnection();
 };
 
 main();
