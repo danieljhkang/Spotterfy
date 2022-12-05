@@ -8,20 +8,33 @@ const bcrypt = require("bcryptjs");
 const saltRounds = 10;
 
 //creates a user and adds it to the mongo database
-const createUser = async (username, password) => {
-  // input checking for username and password
-  const validUser = await helpers.checkUserInfo(username, password);
+const createUser = async (firstName, lastName, email, cwid, year, password) => {
+  // check user input
+  helpers.checkUserInfo(firstName);
+  helpers.checkUserInfo(lastName);
+  helpers.checkUserPassword(password)
 
-  // check if username already exists (username should be case-insensitive)
+  // check if user already exists
   const userCollection = await users();
-  username = username.toLowerCase();
-  let found = await userCollection.findOne({ username: username });
-  if (found) throw "This username has already been taken";
+  let found = await userCollection.findOne({ cwid: cwid });
+  if (found) throw "This user already exists";
 
   // hash password using bcrypt
   const hash = await bcrypt.hash(password, saltRounds);
 
-  let newUser = { username: username, password: hash };
+  let newUser = { 
+    firstName: firstName, 
+    lastName: lastName, 
+    email: email, 
+    cwid: cwid,
+    hashPassword: hash, 
+    year: year, 
+    visible: true, 
+    previousReservations: [], 
+    upcomingReservations: [], 
+    weeklyCheckIns: 0, 
+    monthlyMissedReservations: 0 
+  };
 
   const insertUser = await userCollection.insertOne(newUser);
   if (!insertUser.acknowledged || !insertUser.insertedId) {
