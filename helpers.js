@@ -64,68 +64,75 @@ let numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 
 let special = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
-//throws an error if the given username or password is not valid.
-const checkUserInfo = async (username, password) => {
-  if (!username || !password) {
-    throw "You must supply a username and password!";
-  }
-  if (typeof username !== "string") {
-    throw "Username must be a string";
-  }
+//Checks if user password is existant, contains 6+ chars, and includes at least one special char/num/uppercase
+let checkUserPassword = (password) => {
+  if (!password)
+    throw "You must supply a password!";
 
-  username = username.trim();
-  if (username === "") {
-    throw "Username can't be empty spaces";
-  }
-  if (username.length < 4) {
-    throw "Username length must be greater than 4";
-  }
-  if (username.includes(" ")) {
-    throw "Username can't contain empty spaces";
-  }
+    if (typeof password !== "string") 
+      throw "Username must be a string";
 
-  username = username.toLowerCase();
-  for (let i = 0; i < username.length; i++) {
-    if (!letters.includes(username[i]) && !numbers.includes(username[i])) {
-      throw "Username must only contain alphanumeric characters";
+    password = password.trim();
+    if (password === "") {
+      throw "Password is empty spaces";
     }
-  }
-
-  if (typeof password !== "string") {
-    throw "Username must be a string";
-  }
-  password = password.trim();
-  if (password === "") {
-    throw "Password is empty spaces";
-  }
-  if (password.length < 6) {
-    throw "Password must be at least 6 characters";
-  }
-  if (password.includes(" ")) {
-    throw "Password can't contain empty spaces";
-  }
-
-  let oneUpper = false;
-  let oneNum = false;
-  let oneSpecial = false;
-
-  for (let i = 0; i < password.length; i++) {
-    //check for password conditions
-    if (upperLetters.includes(password[i])) {
-      oneUpper = true;
+    if (password.length < 6) {
+      throw "Password must be at least 6 characters";
     }
-    if (numbers.includes(password[i])) {
-      oneNum = true;
+    if (password.includes(" ")) {
+      throw "Password can't contain empty spaces";
     }
+  
+    let oneUpper = false;
+    let oneNum = false;
+    let oneSpecial = false;
+  
+    for (let i = 0; i < password.length; i++) {
+      //check for password conditions
+      if (upperLetters.includes(password[i])) {
+        oneUpper = true;
+      }
+      if (numbers.includes(password[i])) {
+        oneNum = true;
+      }
+    }
+  
+    oneSpecial = special.test(password);
+  
+    if (!oneUpper || !oneNum || !oneSpecial) {
+      throw "Password must have one uppercase letter, one number, and one special character";
+    }
+};
+
+//throws an error if the given input is not valid.
+const checkUserInfo = async (input) => {
+  if (!input) {
+    throw "You must supply a valid input!";
+  }
+  if (typeof input !== "string") {
+    throw "input must be a string";
   }
 
-  oneSpecial = special.test(password);
+  input = input.trim();
+  if (input === "") {
+    throw "input can't be empty spaces";
+  }
+  if (input.length < 4) {
+    throw "input length must be greater than 4";
+  }
+  if (input.includes(" ")) {
+    throw "input can't contain empty spaces";
+  }
 
-  if (!oneUpper || !oneNum || !oneSpecial) {
-    throw "Password must have one uppercase letter, one number, and one special character";
+  input = input.toLowerCase();
+  for (let i = 0; i < input.length; i++) {
+    if (!letters.includes(input[i]) && !numbers.includes(input[i])) {
+      throw "input must only contain alphanumeric characters";
+    }
   }
 };
 
 module.exports = {
+  checkUserPassword,
   checkUserInfo,
 };
