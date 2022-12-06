@@ -1,6 +1,7 @@
 const mongoCollections = require("./config/mongoCollections");
 const users = mongoCollections.users;
-const { ObjectId } = require("mongodb");
+const { ObjectId, Db } = require("mongodb");
+const { dbConnection } = require("./config/mongoConnection");
 
 let letters = [
   "a",
@@ -141,7 +142,7 @@ let validUsername = (username) => {
 };
 
 // check email
-let validEmail = (email) => {
+let validEmail = async (email) => {
   // email must be supplied
   if (!email) throw "Please provide email";
   // email should be a valid string (no empty spaces, no spaces in email and only alphanumeric characters besides "@" and ".")
@@ -149,7 +150,7 @@ let validEmail = (email) => {
     throw "Email must be a non-empty string";
   email = email.trim().toLowerCase();
   // split email at "@" to check for username and stevens email
-  const splitEmail = email.split('@');
+  const splitEmail = email.split("@");
   if (splitEmail.length !== 2) throw "Please provide a valid Stevens email";
   const username = splitEmail[0];
   const stevensEmail = splitEmail[1];
@@ -185,7 +186,7 @@ let validPW = (password) => {
 };
 
 // check cwid
-const validCWID = (cwid) => {
+const validCWID = async (cwid) => {
   // cwid must be supplied
   if (!cwid) throw "Please provide CWID";
   // cwid should be a valid string (no empty spaces, no spaces in cwid, and only numbers) and only 8 characters long

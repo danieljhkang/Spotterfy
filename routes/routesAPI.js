@@ -74,8 +74,8 @@ router
     try {
       helpers.checkUserInfo(firstName);
       helpers.checkUserInfo(lastName);
-      helpers.validCWID(cwid);
-      helpers.validEmail(email);
+      await helpers.validCWID(cwid);
+      await helpers.validEmail(email);
       helpers.validPW(password);
 
       const createdUser = await userData.createUser(

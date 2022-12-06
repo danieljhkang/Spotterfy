@@ -19,16 +19,19 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
   // check if user already exists
   const userCollection = await users();
   let found = await userCollection.findOne({ cwid: cwid });
-  if (found) throw "This user already exists";
+  if (found) throw "A user with this cwid already exists";
+
+  let eFound = await userCollection.findOne({ email: email });
+  if (eFound) throw "A user with this email already exists";
 
   // hash password using bcrypt
   const hash = await bcrypt.hash(password, saltRounds);
 
   let newUser = {
     cwid: cwid,
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
+    firstName: firstName.toLowerCase().trim(),
+    lastName: lastName.toLowerCase().trim(),
+    email: email.toLowerCase().trim(),
     hashPassword: hash,
     year: year,
     visible: true,
