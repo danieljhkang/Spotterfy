@@ -24,18 +24,18 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
   // hash password using bcrypt
   const hash = await bcrypt.hash(password, saltRounds);
 
-  let newUser = { 
+  let newUser = {
     cwid: cwid,
-    firstName: firstName, 
-    lastName: lastName, 
-    email: email, 
-    hashPassword: hash, 
-    year: year, 
-    visible: true, 
-    previousReservations: [], 
-    upcomingReservations: [], 
-    weeklyCheckIns: 0, 
-    monthlyMissedReservations: 0 
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    hashPassword: hash,
+    year: year,
+    visible: true,
+    previousReservations: [],
+    upcomingReservations: [],
+    weeklyCheckIns: 0,
+    monthlyMissedReservations: 0,
   };
 
   const insertUser = await userCollection.insertOne(newUser);
@@ -55,12 +55,12 @@ const checkUserAuth = async (email, password) => {
   const userCollection = await users();
   email = email.trim().toLowerCase();
   let exist = await userCollection.findOne({ email: email });
-  if (!exist) throw "Either the username or password is invalid";
+  if (!exist) throw "The username doesn't exist";
 
   // authenticate user
   let compare = false;
   compare = await bcrypt.compare(password, exist.hashPassword);
-  if (!compare) throw "Either the username or password is invalid";
+  if (!compare) throw "The password is incorrect";
 
   return { authenticatedUser: true };
 };
