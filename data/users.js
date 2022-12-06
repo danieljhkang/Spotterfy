@@ -59,12 +59,7 @@ const checkUserAuth = async (email, password) => {
 
   // authenticate user
   let compare = false;
-
-  try {
-    compare = await bcrypt.compare(password, exist.password);
-  } catch (e) {
-    // no op
-  }
+  compare = await bcrypt.compare(password, exist.hashPassword);
   if (!compare) throw "Either the username or password is invalid";
 
   return { authenticatedUser: true };
