@@ -46,14 +46,15 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
 };
 
 //checks to see if the user is currently authenticated
-const checkUserAuth = async (username, password) => {
+const checkUserAuth = async (email, password) => {
   // validate inputs
-  const validUser = await helpers.checkUserInfo(username, password);
+  helpers.validEmail(email);
+  helpers.validPW(password);
 
   // find user
   const userCollection = await users();
-  username = username.toLowerCase();
-  let exist = await userCollection.findOne({ username: username });
+  email = email.trim().toLowerCase();
+  let exist = await userCollection.findOne({ email: email });
   if (!exist) throw "Either the username or password is invalid";
 
   // authenticate user
@@ -64,7 +65,6 @@ const checkUserAuth = async (username, password) => {
   } catch (e) {
     // no op
   }
-
   if (!compare) throw "Either the username or password is invalid";
 
   return { authenticatedUser: true };
