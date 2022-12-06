@@ -47,7 +47,7 @@ router
 
     if (loginUser.authenticatedUser) {
       //make a cookie
-      req.session.user = { name: "AuthCookie", username: username };
+      req.session.user = { name: "AuthCookie", email: email };
       res.redirect("/homepage");
     } else {
       return res.status(400).json({ error: e });
