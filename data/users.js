@@ -45,7 +45,7 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
   if (!insertUser.acknowledged || !insertUser.insertedId) {
     throw "Could not create user";
   }
-  return { insertedUser: true };
+  return { insertedUser: true }; //dev
 };
 
 //checks to see if the user is currently authenticated
