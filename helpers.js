@@ -86,8 +86,6 @@ let validString = (str) => {
 };
 
 module.exports = {
-  checkUserPassword,
-  checkUserInfo,
   validUsername,
   validEmail,
   validPW,
