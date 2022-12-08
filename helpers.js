@@ -82,7 +82,6 @@ let validString = (str) => {
   if (typeof str !== "string" || str.trim().length === 0)
     throw "String must be a non-empty string";
   str = str.trim().toLowerCase();
-  console.log(str);
   if (!/^[a-z]*$/.test(str)) throw "String must be only letters";
 };
 
