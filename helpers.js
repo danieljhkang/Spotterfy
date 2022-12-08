@@ -30,7 +30,7 @@ let validEmail = async (email) => {
   const username = splitEmail[0];
   const stevensEmail = splitEmail[1];
   try {
-    const validUN = checkUserInfo(username);
+    const validUN = validUsername(username);
   } catch (e) {
     throw "Please provide a valid Stevens email";
   }
