@@ -11,7 +11,7 @@ let validUsername = (username) => {
   // username should be a valid string (no empty spaces, no spaces in username and only alphanumeric characters)
   if (typeof username !== "string" || username.trim().length === 0)
     throw "Username must be a non-empty string";
-  username = username.trim().toLowerCase;
+  username = username.trim().toLowerCase();
   if (username.length < 4 || !/^[A-Za-z0-9]*$/.test(username))
     throw "Username must be alphanumeric and at least 4 characters";
 };
@@ -81,7 +81,8 @@ let validString = (str) => {
   // string should be a valid string (no empty spaces, no spaces in username and only alphanumeric characters)
   if (typeof str !== "string" || str.trim().length === 0)
     throw "String must be a non-empty string";
-  str = str.trim().toLowerCase;
+  str = str.trim().toLowerCase();
+  console.log(str);
   if (!/^[a-z]*$/.test(str)) throw "String must be only letters";
 };
 
