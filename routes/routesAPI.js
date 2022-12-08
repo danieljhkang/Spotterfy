@@ -72,8 +72,8 @@ router
     let password = req.body.passwordInput;
 
     try {
-      helpers.checkUserInfo(firstName);
-      helpers.checkUserInfo(lastName);
+      helpers.validString(firstName);
+      helpers.validString(lastName);
       await helpers.validCWID(cwid);
       await helpers.validEmail(email);
       helpers.validPW(password);
