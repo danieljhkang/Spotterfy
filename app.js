@@ -117,13 +117,13 @@ const main = async () => {
       currentRegistered: [],
     });
   }
-  try{
-    var c = await usersData.switchVisibility("rbalani@stevens.edu");
-    console.log(c)
-  }catch(e)
-  {
-    console.log(e)
-  }
+  // try{
+  //   var c = await usersData.getVisibleUsers();
+  //   console.log(c)
+  // }catch(e)
+  // {
+  //   console.log(e)
+  // }
 
   // await connection.closeConnection();
 };

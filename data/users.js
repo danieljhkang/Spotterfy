@@ -69,6 +69,16 @@ const switchVisibility = async (email) => {
   return !found.visible;
 }
 
+/* Returns array of all visible user objects to display on homepage, each object in the array is parsed to include only first/last names and upcomingReservations */
+const getVisibleUsers = async () =>{
+  const userCollection = await users();
+  const visibleList = await userCollection.find({visible: true}).project({firstName: 1, lastName: 1, upcomingReservations: 1}).toArray();
+  if (!visibleList) 
+    throw 'Could not get all visible users';
+
+  return visibleList;
+}
+
 //checks to see if the user is currently authenticated
 const checkUserAuth = async (email, password) => {
   // validate inputs
@@ -112,5 +122,6 @@ module.exports = {
   checkUserAuth,
   getFirstName,
   getUserByEmail,
-  switchVisibility
+  switchVisibility,
+  getVisibleUsers
 };
