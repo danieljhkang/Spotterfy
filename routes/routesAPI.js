@@ -45,14 +45,14 @@ router
     } catch (e) {
       return res.status(400).json({ error: e });
     }
-    
+
     if (loginUser.authenticatedUser) {
       //make a cookie
       req.session.user = { name: "AuthCookie", email: email };
       res.redirect("/homepage");
     } else {
       console.log(loginUser.authenticatedUser);
-      return res.status(400).json({ error : "Failed to authenticate user"});
+      return res.status(400).json({ error: "Failed to authenticate user" });
     }
   });
 
@@ -99,8 +99,28 @@ router
 
 router.route("/profile").get(async (req, res) => {
   //code here for GET
+  // get user info by email
+  let email = req.session.user.email;
+  let user = await userData.getUserByEmail(email);
+
+  // get full name
+  let firstName = user.firstName;
+  let firstLetter = firstName.charAt(0).toUpperCase();
+  let remainingLetters = firstName.slice(1);
+  firstName = firstLetter + remainingLetters;
+  let lastName = user.lastName;
+  firstLetter = lastName.charAt(0).toUpperCase();
+  remainingLetters = lastName.slice(1);
+  lastName = firstLetter + remainingLetters;
+  fullName = firstName + " " + lastName;
+
   res.render("profile", {
     title: "Spotterfy",
+    fullName: fullName,
+    email: email,
+    cwid: user.cwid,
+    weeklyCheckIns: user.weeklyCheckIns,
+    monthlyMissedReservations: user.monthlyMissedReservations,
   });
 });
 
@@ -122,19 +142,18 @@ router.route("/homepage").get(async (req, res) => {
   let name = await userData.getFirstName(email);
   let firstLetter = name.charAt(0).toUpperCase();
   let remainingLetters = name.slice(1);
-  name = firstLetter + remainingLetters
+  name = firstLetter + remainingLetters;
 
   let date = new Date().toUTCString().slice(0, 16);
-  try{
+  try {
     res.render("homepage", {
-    title: "Spotterfy",
-    user_name: name,
-    date: date,
-   });
-  }catch(e){
+      title: "Spotterfy",
+      user_name: name,
+      date: date,
+    });
+  } catch (e) {
     return res.status(400).json({ error: e });
   }
-  
 });
 
 module.exports = router;

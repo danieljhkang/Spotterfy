@@ -75,10 +75,20 @@ const getFirstName = async (email) => {
   email = email.trim().toLowerCase();
   let exist = await userCollection.findOne({ email: email });
   return exist.firstName;
-}
+};
+
+// get user by email
+const getUserByEmail = async (email) => {
+  helpers.validEmail(email);
+  const userCollection = await users();
+  email = email.trim().toLowerCase();
+  let user = await userCollection.findOne({ email: email });
+  return user;
+};
 
 module.exports = {
   createUser,
   checkUserAuth,
   getFirstName,
+  getUserByEmail,
 };

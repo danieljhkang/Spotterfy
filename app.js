@@ -22,6 +22,42 @@ app.use(
   })
 );
 
+app.use("/profile", (req, res, next) => {
+  if (!req.session.user) {
+    res.status(403).render("forbidden");
+    return;
+  } else {
+    next();
+  }
+});
+
+app.use("/homepage", (req, res, next) => {
+  if (!req.session.user) {
+    res.status(403).render("forbidden");
+    return;
+  } else {
+    next();
+  }
+});
+
+app.use("/reserve", (req, res, next) => {
+  if (!req.session.user) {
+    res.status(403).render("forbidden");
+    return;
+  } else {
+    next();
+  }
+});
+
+app.use("/login", (req, res, next) => {
+  if (req.session.user) {
+    res.status(403).render("homepage");
+    return;
+  } else {
+    next();
+  }
+});
+
 configRoutes(app);
 
 const connection = require("./config/mongoConnection");

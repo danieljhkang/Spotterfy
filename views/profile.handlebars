@@ -7,13 +7,13 @@
         <h3>CWID</h3>
         <p>{{cwid}}</p>
     </div>
-    {{#if {{weeklyCheckins}}}}
+    {{#if weeklyCheckIns}}
     <h2>Looks like you haven't checked in this week yet!</h2>
     {{else}}
-    <h2>You've checked in {{weeklyCheckins}} times this week!</h2>
+    <h2>You've checked in {{weeklyCheckIns}} times this week!</h2>
     {{/if}}
     
-    {{#if {{monthlyMissedReservations}}}}
+    {{#if monthlyMissedReservations}}
     <h2>You haven't missed a reservation this month!</h2>
     {{else}}
     <h2>You've missed {{monthlyMissedReservations}} reservations this month!</h2>
