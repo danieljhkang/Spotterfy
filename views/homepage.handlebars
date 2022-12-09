@@ -1,15 +1,19 @@
 <main>
-    <ul>
-        {{#each users}}
-        <li class="user-in-list">
-            <h2>{{name}}</h2>
-            <p class="user-location">At {{location}}</p>
-            <p class="user-workouts">
-                {{#each workouts}}
-                {{this}} 
-                {{/each}}
-            </p>
-        </li>
-        {{/each}}
-    </ul>
+
+  <h3>Hello, {{{user_name}}}</h3>
+  <p>Today is {{{date}}}</p>
+ 
+  <ul>
+    {{#each users}}
+      <li class="user-in-list">
+        <h2>s{{name}}</h2>
+        <p class="user-location">At {{location}}</p>
+        <p class="user-workouts">
+          {{#each workouts}}
+            {{this}}
+          {{/each}}
+        </p>
+      </li>
+    {{/each}}
+  </ul>
 </main>

@@ -58,7 +58,7 @@ const checkUserAuth = async (email, password) => {
   const userCollection = await users();
   email = email.trim().toLowerCase();
   let exist = await userCollection.findOne({ email: email });
-  if (!exist) throw "The username doesn't exist";
+  if (!exist) throw "The user doesn't exist";
 
   // authenticate user
   let compare = false;
@@ -68,7 +68,17 @@ const checkUserAuth = async (email, password) => {
   return { authenticatedUser: true };
 };
 
+//returns the string first name of the user
+const getFirstName = async (email) => {
+  helpers.validEmail(email);
+  const userCollection = await users();
+  email = email.trim().toLowerCase();
+  let exist = await userCollection.findOne({ email: email });
+  return exist.firstName;
+}
+
 module.exports = {
   createUser,
   checkUserAuth,
+  getFirstName,
 };

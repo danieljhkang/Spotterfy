@@ -4,6 +4,7 @@ const userData = data.users;
 const express = require("express");
 const router = express.Router();
 const helpers = require("../helpers");
+const users = require("../data/users");
 
 router.route("/").get(async (req, res) => {
   //code here for GET
@@ -33,7 +34,7 @@ router
 
     try {
       helpers.validEmail(email);
-      helpers.checkUserPassword(password);
+      helpers.validPW(password);
     } catch (e) {
       return res.status(400).json({ error: e });
     }
@@ -44,13 +45,14 @@ router
     } catch (e) {
       return res.status(400).json({ error: e });
     }
-
+    
     if (loginUser.authenticatedUser) {
       //make a cookie
       req.session.user = { name: "AuthCookie", email: email };
       res.redirect("/homepage");
     } else {
-      return res.status(400).json({ error: e });
+      console.log(loginUser.authenticatedUser);
+      return res.status(400).json({ error : "Failed to authenticate user"});
     }
   });
 
@@ -116,9 +118,23 @@ router
 
 router.route("/homepage").get(async (req, res) => {
   //code here for GET
-  res.render("homepage", {
+  let email = req.session.user.email;
+  let name = await userData.getFirstName(email);
+  let firstLetter = name.charAt(0).toUpperCase();
+  let remainingLetters = name.slice(1);
+  name = firstLetter + remainingLetters
+
+  let date = new Date().toUTCString().slice(0, 16);
+  try{
+    res.render("homepage", {
     title: "Spotterfy",
-  });
+    user_name: name,
+    date: date,
+   });
+  }catch(e){
+    return res.status(400).json({ error: e });
+  }
+  
 });
 
 module.exports = router;
