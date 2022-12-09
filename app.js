@@ -117,13 +117,13 @@ const main = async () => {
       currentRegistered: [],
     });
   }
-  // try{
-  //   var c = await usersData.createUser("Rohan", "Balani", "rbalani@stevens.edu", 87655321, "junior", "Rohan@1")
-  //   console.log(c)
-  // }catch(e)
-  // {
-  //   console.log(e)
-  // }
+  try{
+    var c = await usersData.switchVisibility("rbalani@stevens.edu");
+    console.log(c)
+  }catch(e)
+  {
+    console.log(e)
+  }
 
   // await connection.closeConnection();
 };

@@ -48,6 +48,27 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
   return { insertedUser: true }; //dev
 };
 
+/* Changes the visibility of a user and RETURNS THE UPDATED VISIBILITY */
+const switchVisibility = async (email) => {
+  helpers.validEmail(email);
+  const userCollection = await users();
+  let found = await userCollection.findOne({email: email});
+  if(!found)
+    throw "A user with this email doesn't exist"
+
+  const updatedInfo = await userCollection.updateOne(
+    {email: email},
+    {$set: {visible: !found.visible}}
+  );
+
+  if (updatedInfo.modifiedCount === 0) {
+    throw 'could not update visibility successfully';
+  }
+
+  //Returns updated user visibility
+  return !found.visible;
+}
+
 //checks to see if the user is currently authenticated
 const checkUserAuth = async (email, password) => {
   // validate inputs
@@ -91,4 +112,5 @@ module.exports = {
   checkUserAuth,
   getFirstName,
   getUserByEmail,
+  switchVisibility
 };
