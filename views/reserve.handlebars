@@ -3,14 +3,14 @@
         <label for="startTime">Start Time</label>
         <input list="startTimes" id="startTime" name="startTime">
         <datalist id="startTimes">
-            {{#each {{startTimes}}}}
+            {{#each startTimes}}
             <option value="{{this}}">{{this}}</option>
             {{/each}}
         </datalist>
         <label for="endTime">End Time</label>
         <input list="endTimes" id="endTime" name="endTime">
         <datalist id="endTimes">
-            {{#each {{endTimes}}}}
+            {{#each endTimes}}
             <option value="{{this}}">{{this}}</option>
             {{/each}}
         </datalist>
