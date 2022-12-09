@@ -16,4 +16,14 @@
       </li>
     {{/each}}
   </ul>
+<div class="visible-users">
+  <h3>Who's Working Out Today?</h3>
+  <ol>
+    {{#each visibleUsers}}
+      <li style="font-weight: bold;">{{firstName}} {{lastName}}</li>
+      <li>Workout: {{upcomingReservations}} </li>
+      <br>
+    {{/each}}
+  </ol>
+</div>
 </main>

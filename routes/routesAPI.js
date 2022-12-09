@@ -145,11 +145,13 @@ router.route("/homepage").get(async (req, res) => {
   name = firstLetter + remainingLetters;
 
   let date = new Date().toUTCString().slice(0, 16);
+  let visibleUsers = await userData.getVisibleUsers();
   try {
     res.render("homepage", {
       title: "Spotterfy",
       user_name: name,
       date: date,
+      visibleUsers: visibleUsers
     });
   } catch (e) {
     return res.status(400).json({ error: e });

@@ -72,7 +72,7 @@ const switchVisibility = async (email) => {
 /* Returns array of all visible user objects to display on homepage, each object in the array is parsed to include only first/last names and upcomingReservations */
 const getVisibleUsers = async () =>{
   const userCollection = await users();
-  const visibleList = await userCollection.find({visible: true}).project({firstName: 1, lastName: 1, upcomingReservations: 1}).toArray();
+  const visibleList = await userCollection.find({visible: true}).project({firstName: 1, lastName: 1, upcomingReservations: 1, _id: 0}).toArray();
   if (!visibleList) 
     throw 'Could not get all visible users';
 

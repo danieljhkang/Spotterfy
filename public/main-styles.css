@@ -71,3 +71,8 @@ form #classInput {
     height: 20px;
     margin-bottom: 7px;
 }
+
+.visible-users{
+    text-align: right;
+    padding-right: 30px
+}
