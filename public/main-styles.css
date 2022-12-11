@@ -2,7 +2,6 @@
     font-family: "Poppins", sans-serif;
     box-sizing: border-box;
     margin: 0;
-    padding: 0px 20px;
 }
 
 header {
@@ -25,20 +24,23 @@ header {
     color: skyblue;
 }
 
-a:link {
-    text-decoration: none;
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-a:visited {
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: none;
-}
-
+a:link,
+a:visited,
+a:hover,
 a:active {
     text-decoration: none;
+}
+
+#login-form,
+#register-form {
+    text-align: center;
+    padding-bottom: 10px;
 }
 
 .error-container {
@@ -46,16 +48,12 @@ a:active {
     color: #fff;
     border-radius: 5px;
     width: fit-content;
-}
-
-form #login-form,
-form #register-form {
-    display: table;
+    padding: 5px 15px 5px;
+    margin: 10px 0 10px;
 }
 
 form label {
     display: block;
-    text-align: center;
     margin-bottom: 10px;
 }
 
@@ -77,13 +75,4 @@ form #classInput {
 .visible-users {
     text-align: right;
     padding-right: 30px;
-}
-
-.form-container {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.form-link-text {
-    text-align: center;
 }
