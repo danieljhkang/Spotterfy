@@ -8,9 +8,7 @@ const users = require("../data/users");
 
 router.route("/").get(async (req, res) => {
   //code here for GET
-  res.render("login", {
-    title: "Spotterfy",
-  });
+  res.redirect("login")
 });
 
 router
@@ -27,32 +25,35 @@ router
     let password = req.body.passwordInput;
 
     if (!email || !password) {
-      return res
+      res
         .status(400)
-        .json({ error: "You must supply both an email and a password" });
+        .render("login", {title: "Spotterfy", error: "You must supply both an email and a password" });
+        return;
     }
 
     try {
       helpers.validEmail(email);
       helpers.validPW(password);
     } catch (e) {
-      return res.status(400).json({ error: e });
+      res.status(400).render("login", {title: "Spotterfy", error: e });
+      return;
     }
 
     let loginUser;
     try {
       loginUser = await userData.checkUserAuth(email, password);
     } catch (e) {
-      return res.status(400).json({ error: e });
+      res.status(400).render("login", {title: "Spotterfy", error: e });
+      return;
     }
 
-    if (loginUser.authenticatedUser) {
+    if (loginUser.authenticatedUser === true) {
       //make a cookie
       req.session.user = { name: "AuthCookie", email: email };
       res.redirect("/homepage");
     } else {
       console.log(loginUser.authenticatedUser);
-      return res.status(400).json({ error: "Failed to authenticate user" });
+      res.status(400).render("login", {title: "Spotterfy", error: "Failed to authenticate user"});
     }
   });
 
