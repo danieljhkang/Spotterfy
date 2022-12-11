@@ -134,7 +134,11 @@ router
   .post(async (req, res) => {
     // switch visibility
     let email = req.session.user.email;
-    let visibility = await userData.switchVisibility(email);
+    try {
+      let visibility = await userData.switchVisibility(email);
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
 
     // get user
     let user = await userData.getUserByEmail(email);
