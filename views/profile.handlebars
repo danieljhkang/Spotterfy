@@ -8,15 +8,15 @@
         <p>{{cwid}}</p>
     </div>
     {{#if weeklyCheckIns}}
-    <h2>You've checked in {{weeklyCheckIns}} times this week!</h2>
+    <p>You've checked in {{weeklyCheckIns}} times this week!</p>
     {{else}}
-    <h2>Looks like you haven't checked in this week yet!</h2>
+    <p>Looks like you haven't checked in this week yet!</p>
     {{/if}}
     
     {{#if monthlyMissedReservations}}
-    <h2>You've missed {{monthlyMissedReservations}} reservations this month!</h2>
+    <p>You've missed {{monthlyMissedReservations}} reservations this month!</p>
     {{else}}
-    <h2>You haven't missed a reservation this month!</h2>
+    <p>You haven't missed a reservation this month!</p>
     {{/if}}
 
     <form action="/profile" method="POST" id="switch-visibility">
