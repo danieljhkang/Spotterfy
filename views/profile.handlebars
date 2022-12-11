@@ -19,6 +19,13 @@
     <h2>You haven't missed a reservation this month!</h2>
     {{/if}}
 
+    <form action="/profile" method="POST" id="switch-visibility">
+        {{#if visible}}
+            <button type="submit">Change to private</button>
+        {{else}}
+            <button type="submit">Change to public</button>
+        {{/if}}
+    </form>
     <button>
         <a href="/logout">Log Out</a>
     </button>

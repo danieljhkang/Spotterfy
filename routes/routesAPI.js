@@ -8,7 +8,7 @@ const users = require("../data/users");
 
 router.route("/").get(async (req, res) => {
   //code here for GET
-  res.redirect("login")
+  res.redirect("login");
 });
 
 router
@@ -25,17 +25,18 @@ router
     let password = req.body.passwordInput;
 
     if (!email || !password) {
-      res
-        .status(400)
-        .render("login", {title: "Spotterfy", error: "You must supply both an email and a password" });
-        return;
+      res.status(400).render("login", {
+        title: "Spotterfy",
+        error: "You must supply both an email and a password",
+      });
+      return;
     }
 
     try {
       helpers.validEmail(email);
       helpers.validPW(password);
     } catch (e) {
-      res.status(400).render("login", {title: "Spotterfy", error: e });
+      res.status(400).render("login", { title: "Spotterfy", error: e });
       return;
     }
 
@@ -43,7 +44,7 @@ router
     try {
       loginUser = await userData.checkUserAuth(email, password);
     } catch (e) {
-      res.status(400).render("login", {title: "Spotterfy", error: e });
+      res.status(400).render("login", { title: "Spotterfy", error: e });
       return;
     }
 
@@ -53,7 +54,10 @@ router
       res.redirect("/homepage");
     } else {
       console.log(loginUser.authenticatedUser);
-      res.status(400).render("login", {title: "Spotterfy", error: "Failed to authenticate user"});
+      res.status(400).render("login", {
+        title: "Spotterfy",
+        error: "Failed to authenticate user",
+      });
     }
   });
 
@@ -98,32 +102,64 @@ router
     }
   });
 
-router.route("/profile").get(async (req, res) => {
-  //code here for GET
-  // get user info by email
-  let email = req.session.user.email;
-  let user = await userData.getUserByEmail(email);
+router
+  .route("/profile")
+  .get(async (req, res) => {
+    //code here for GET
+    // get user info by email
+    let email = req.session.user.email;
+    let user = await userData.getUserByEmail(email);
 
-  // get full name
-  let firstName = user.firstName;
-  let firstLetter = firstName.charAt(0).toUpperCase();
-  let remainingLetters = firstName.slice(1);
-  firstName = firstLetter + remainingLetters;
-  let lastName = user.lastName;
-  firstLetter = lastName.charAt(0).toUpperCase();
-  remainingLetters = lastName.slice(1);
-  lastName = firstLetter + remainingLetters;
-  fullName = firstName + " " + lastName;
+    // get full name
+    let firstName = user.firstName;
+    let firstLetter = firstName.charAt(0).toUpperCase();
+    let remainingLetters = firstName.slice(1);
+    firstName = firstLetter + remainingLetters;
+    let lastName = user.lastName;
+    firstLetter = lastName.charAt(0).toUpperCase();
+    remainingLetters = lastName.slice(1);
+    lastName = firstLetter + remainingLetters;
+    fullName = firstName + " " + lastName;
 
-  res.render("profile", {
-    title: "Spotterfy",
-    fullName: fullName,
-    email: email,
-    cwid: user.cwid,
-    weeklyCheckIns: user.weeklyCheckIns,
-    monthlyMissedReservations: user.monthlyMissedReservations,
+    res.render("profile", {
+      title: "Spotterfy",
+      fullName: fullName,
+      email: email,
+      cwid: user.cwid,
+      weeklyCheckIns: user.weeklyCheckIns,
+      monthlyMissedReservations: user.monthlyMissedReservations,
+      visible: user.visible,
+    });
+  })
+  .post(async (req, res) => {
+    // switch visibility
+    let email = req.session.user.email;
+    let visibility = await userData.switchVisibility(email);
+
+    // get user
+    let user = await userData.getUserByEmail(email);
+
+    // get full name
+    let firstName = user.firstName;
+    let firstLetter = firstName.charAt(0).toUpperCase();
+    let remainingLetters = firstName.slice(1);
+    firstName = firstLetter + remainingLetters;
+    let lastName = user.lastName;
+    firstLetter = lastName.charAt(0).toUpperCase();
+    remainingLetters = lastName.slice(1);
+    lastName = firstLetter + remainingLetters;
+    fullName = firstName + " " + lastName;
+
+    res.render("profile", {
+      title: "Spotterfy",
+      fullName: fullName,
+      email: email,
+      cwid: user.cwid,
+      weeklyCheckIns: user.weeklyCheckIns,
+      monthlyMissedReservations: user.monthlyMissedReservations,
+      visible: user.visible,
+    });
   });
-});
 
 router
   .route("/reserve")
@@ -153,7 +189,7 @@ router.route("/homepage").get(async (req, res) => {
       title: "Spotterfy",
       user_name: name,
       date: date,
-      visibleUsers: visibleUsers
+      visibleUsers: visibleUsers,
     });
   } catch (e) {
     return res.status(400).json({ error: e });
