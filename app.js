@@ -51,7 +51,11 @@ app.use("/reserve", (req, res, next) => {
 
 app.use("/login", (req, res, next) => {
   if (req.session.user) {
-    res.status(403).render("homepage");
+    // res.status(500).render("homepage", {
+    //   title: "Spotterfy",
+
+    // });
+    res.status(500).redirect("homepage");
     return;
   } else {
     next();
@@ -77,44 +81,58 @@ const main = async () => {
     await hotspotsCollection.insertOne({
       day: "Sunday",
       weeksPast: 0,
-      registeredAverage: [],
-      currentRegistered: [],
+      registeredAverageUCC: [],
+      currentRegisteredUCC: [],
+      registeredAverageSCH: [],
+      currentRegisteredSCH: [],
     });
     await hotspotsCollection.insertOne({
       day: "Monday",
       weeksPast: 0,
-      registeredAverage: [],
-      currentRegistered: [],
+      registeredAverageUCC: [],
+      currentRegisteredUCC: [],
+      registeredAverageSCH: [],
+      currentRegisteredSCH: [],
     });
     await hotspotsCollection.insertOne({
       day: "Tuesday",
       weeksPast: 0,
-      registeredAverage: [],
-      currentRegistered: [],
+      registeredAverageUCC: [],
+      currentRegisteredUCC: [],
+      registeredAverageSCH: [],
+      currentRegisteredSCH: [],
     });
     await hotspotsCollection.insertOne({
       day: "Wednesday",
       weeksPast: 0,
-      registeredAverage: [],
-      currentRegistered: [],
+      registeredAverageUCC: [],
+      currentRegisteredUCC: [],
+      registeredAverageSCH: [],
+      currentRegisteredSCH: [],
     });
     await hotspotsCollection.insertOne({
       day: "Thursday",
       weeksPast: 0,
-      registeredAverage: [],
-      currentRegistered: [],
+      registeredAverageUCC: [],
+      currentRegisteredUCC: [],
+      registeredAverageSCH: [],
+      currentRegisteredSCH: [],
     });
     await hotspotsCollection.insertOne({
       day: "Friday",
       weeksPast: 0,
-      registeredAverage: [],
-      currentRegistered: [],
+      registeredAverageUCC: [],
+      currentRegisteredUCC: [],
+      registeredAverageSCH: [],
+      currentRegisteredSCH: [],
     });
     await hotspotsCollection.insertOne({
       day: "Saturday",
       weeksPast: 0,
-      registeredAverage: [],
-      currentRegistered: [],
+      registeredAverageUCC: [],
+      currentRegisteredUCC: [],
+      registeredAverageSCH: [],
+      currentRegisteredSCH: [],
     });
   }
   // try{

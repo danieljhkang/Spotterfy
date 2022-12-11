@@ -138,6 +138,7 @@ router
 
 router.route("/homepage").get(async (req, res) => {
   //code here for GET
+  //get user first name
   let email = req.session.user.email;
   let name = await userData.getFirstName(email);
   let firstLetter = name.charAt(0).toUpperCase();
@@ -156,6 +157,14 @@ router.route("/homepage").get(async (req, res) => {
   } catch (e) {
     return res.status(400).json({ error: e });
   }
+});
+
+router.route("/logout").get(async (req, res) => {
+  //code here for GET
+  req.session.destroy();
+  res.render("logout", {
+    title: "Logged Out",
+  });
 });
 
 module.exports = router;

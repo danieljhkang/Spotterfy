@@ -2,7 +2,7 @@
     font-family: "Poppins", sans-serif;
     box-sizing: border-box;
     margin: 0;
-    padding: 0;
+    padding: 0px 20px;
 }
 
 header {
@@ -54,7 +54,9 @@ form #register-form {
 }
 
 form label {
-    display: table-cell;
+    display: block;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
 form input {
@@ -72,7 +74,16 @@ form #classInput {
     margin-bottom: 7px;
 }
 
-.visible-users{
+.visible-users {
     text-align: right;
-    padding-right: 30px
+    padding-right: 30px;
+}
+
+.form-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.form-link-text {
+    text-align: center;
 }
