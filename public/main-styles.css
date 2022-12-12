@@ -38,7 +38,8 @@ a:active {
 }
 
 #login-form,
-#register-form {
+#register-form,
+#reservation-form {
     text-align: center;
     padding-bottom: 10px;
 }
@@ -54,22 +55,30 @@ a:active {
 
 form label {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 7px;
 }
 
 form input {
-    display: table-cell;
+    display: block;
     width: 200px;
-    margin-bottom: 7px;
+    margin: 0 auto 7px;
 }
 
 form button {
-    font-size: 15px;
+    font-size: 18px;
+    margin: 15px 0;
+    padding: 4px 1.5em 4px;
 }
 
-form #classInput {
-    height: 20px;
-    margin-bottom: 7px;
+form select {
+    display: block;
+    height: 25px;
+    margin: 0 auto 7px;
+    padding-left: 5px;
+}
+
+form #workouts {
+    height: 100px;
 }
 
 .visible-users {
