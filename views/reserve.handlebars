@@ -1,24 +1,48 @@
 <main>
-     <form id="reservation-form">
-        <label for="startTime">Start Time</label>
-        <input list="startTimes" id="startTime" name="startTime">
-        <datalist id="startTimes">
-            {{#each startTimes}}
-            <option value="{{this}}">{{this}}</option>
-            {{/each}}
-        </datalist>
-        <label for="endTime">End Time</label>
-        <input list="endTimes" id="endTime" name="endTime">
-        <datalist id="endTimes">
-            {{#each endTimes}}
-            <option value="{{this}}">{{this}}</option>
-            {{/each}}
-        </datalist>
-        <select id="location" name="location">
-            <option value="ucc">UCC Fitness Center</option>
-            <option value="schaefer">Schaefer Fitness Center</option>
-        </select>
-        <button type="submit">Create Reservation</button>
-     </form>
-     <div id="hot-zones-graph"></div>
+     <div class="form-container">
+        {{#if error}}
+        <div class="error-container">
+            {{error}}
+        </div>
+        {{/if}}
+        <form id="reservation-form" action="reserve" method="POST">
+            <label>Date</label>
+            <input type="date" id="date" value={{currentDate}} min={{currentDate}} max={{oneYearFromToday}} name="date">
+            <label for="startTime">Start Time</label>
+            <input list="startTimes" id="startTime" name="startTime">
+            <datalist id="startTimes">
+                {{#each timesList}}
+                <option value="{{this}}">
+                {{/each}}
+            </datalist>
+            <label for="endTime">End Time</label>
+            <input list="endTimes" id="endTime" name="endTime">
+            <datalist id="endTimes">
+                {{#each timesList}}
+                <option value="{{this}}">
+                {{/each}}
+            </datalist>
+            <label for="location">Location</label>
+            <select id="location" name="location">
+                <option value="ucc">UCC Fitness Center</option>
+                <option value="schaefer">Schaefer Fitness Center</option>
+            </select>
+            <label for="workouts">Workouts</label>
+            <select id="workouts" name="workouts" multiple>
+                <option hidden selected value="n/a"></option>
+                <option value="Arms">Arms</option>
+                <option value="Legs">Legs</option>
+                <option value="Back">Back</option>
+                <option value="Chest">Chest</option>
+                <option value="Shoulders">Shoulders</option>
+                <option value="Abs">Abs</option>
+                <option value="Cardio">Cardio</option>
+                <option value="Calisthenics">Calisthenics</option>
+                <option value="Yoga">Yoga</option>
+                <option value="Other">Other</option>
+            </select>
+            <button type="submit">Create Reservation</button>
+        </form>
+        <div id="hot-zones-graph"></div>
+     </div>
 </main>
