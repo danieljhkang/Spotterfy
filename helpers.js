@@ -17,7 +17,7 @@ let validUsername = (username) => {
 };
 
 // check email
-let validEmail = async (email) => {
+let validEmail = (email) => {
   // email must be supplied
   if (!email) throw "Please provide email";
   // email should be a valid string (no empty spaces, no spaces in email and only alphanumeric characters besides "@" and ".")
@@ -61,7 +61,7 @@ let validPW = (password) => {
 };
 
 // check cwid
-const validCWID = async (cwid) => {
+const validCWID = (cwid) => {
   // cwid must be supplied
   if (!cwid) throw "Please provide CWID";
   // cwid should be a valid string (no empty spaces, no spaces in cwid, and only numbers) and only 8 characters long
@@ -75,15 +75,89 @@ const validCWID = async (cwid) => {
 
 /* Input checking */
 // check valid string
-let validString = (str) => {
+let validString = (str, varName) => {
   // string must be supplied
-  if (!str) throw "Please provide a string";
+  if (str === undefined) throw `Please provide a ${varName.toLowerCase()}`;
   // string should be a valid string (no empty spaces, no spaces in username and only alphanumeric characters)
   if (typeof str !== "string" || str.trim().length === 0)
-    throw "String must be a non-empty string";
-  str = str.trim().toLowerCase();
-  if (!/^[a-z]*$/.test(str)) throw "String must be only letters";
+    throw `${varName} must be a non-empty string`;
+  return str.trim().toLowerCase();
 };
+
+/* Takes a time in miiltary format and converts it to cilivian format "hh:mm [AM/PM]" */
+let convertTimeToCivilian = (time) => {
+    time = time.split(':');
+    let meridiem = "AM";
+    let hours = parseInt(time[0]);
+    let minutes = parseInt(time[1]);
+    if (hours >= 12) {
+        meridiem = "PM";
+        if (hours > 12) hours -= 12;
+    }
+    if (hours === 0) hours = 12;
+    return `${hours}:${minutes} ${meridiem}`
+}
+
+
+/* Takes a time in civilian format "hh:mm [AM/PM]" and returns it in military format */
+let convertTimeToMilitary = (time) => {
+    time = time.split(" ");
+    let timeValue = time[0].split(':');
+    let hours = parseInt(timeValue[0]) + (time[1]==='PM' && hours < 12 ? 12 : 0);
+    let minutes = parseInt(timeValue[1]);
+    if (hours === 12 && time[1] === 'AM') hours = 0;
+    return `${hours<10 ? '0' : ''}${hours}:${minutes<10 ? '0' : ''}${minutes}`;
+}   
+
+
+let validReservation = (date, startTime, endTime) => {
+    let currDate = new Date();    
+    let [year, month, day] = date.split('-');
+
+    // Check if the date is valid
+    if (year < currDate.getFullYear()) throw "Date is invalid";
+    if (year === currDate.getFullYear() && month < currDate.getMonth()+1) throw "Date is invalid";
+    if (month === currDate.getMonth()+1 && day < currDate.getDate()) throw "Date is invalid";
+   
+    // Split given times into their separate parts (hours, minutes, AM/PM)
+    let [ startHours, startMinutes ] = convertTimeToMilitary(startTime).split(':');
+    let [ endHours, endMinutes ] = convertTimeToMilitary(endTime).split(':'); 
+   
+    // Check if the reservation time is in the past (only need to do so if the reservation date
+    //   is the current date)
+    if (year === currDate.getFullYear() && month === currDate.getMonth()+1 && day === currDate.getDate()) {
+        if (startHours < currDate.getHours() || (startHours === currDate.getHours() && startMinutes < currDate.getMinutes()))
+            throw "Start time is invalid";
+        if (endHours < currDate.getHours() || (endHours === currDate.getHours() && endMinutes < currDate.getMinutes()))
+            throw "End time is invalid";
+    }
+    // Check if end time is before start time
+    if (endHours < startHours || (endHours === startHours && endMinutes < startMinutes)) 
+        throw "The start time for reservation must come before end time";
+    if (startHours === endHours && startMinutes === endMinutes)
+        throw "You must reserve a minimum of 20 minutes";
+    if (endHours - startHours > 2 || (endHours === startHours && endMinutes < startMinutes))
+        throw "Cannot reserve more than two hours at a time";
+}
+
+let getTimesLists = () => {
+    const minuteIncrement = 20;
+    const minutesInDay = 24 * 60;
+    let hours = 0;
+    let minutes = 0;
+    let timesList = [];
+    while (timesList.length < Math.trunc(minutesInDay/minuteIncrement)) {
+        let time = "";
+        time += hours%12===0 ? "12" : hours%12;     // Convert hours from military
+        time += ":";
+        time += (minutes<10 ? "0" : "") + minutes;  // Add leading 0 to single digit minutes
+        time += " " + (hours<12 ? "AM" : "PM");     // If hours < 12, AM; else, PM
+        timesList.push(time);
+        minutes = (minutes + minuteIncrement) % 60; // Increase minutes by increment
+        hours = minutes===0 ? hours+1 : hours;      // If minutes hits 0, signifies hour change
+    }
+    return timesList;
+}
 
 module.exports = {
   validUsername,
@@ -91,4 +165,8 @@ module.exports = {
   validPW,
   validCWID,
   validString,
+  validReservation,
+  convertTimeToCivilian,
+  convertTimeToMilitary,
+  getTimesLists,
 };
