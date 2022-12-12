@@ -79,10 +79,11 @@ router
     let password = req.body.passwordInput;
 
     try {
-      helpers.validString(firstName);
-      helpers.validString(lastName);
-      await helpers.validCWID(cwid);
-      await helpers.validEmail(email);
+      helpers.validString(firstName, "First name");
+      helpers.validString(lastName, "Last name");
+      helpers.validEmail(email);
+      helpers.validCWID(cwid);
+      if (year.trim().length === 0) throw "Please provide a class";
       helpers.validPW(password);
 
       const createdUser = await userData.createUser(
@@ -94,11 +95,18 @@ router
         password
       );
 
-      if (typeof createdUser === "undefined")
-        return res.status(500).json({ error: "Internal Server Error" });
+      if (typeof createdUser === "undefined") {
+        return res.status(500).render("register", {
+            title: "Spotterfy", 
+            error: "Internal Server Error" 
+        });
+      } 
       else res.redirect("/login");
     } catch (e) {
-      return res.status(400).json({ error: e });
+      return res.status(400).render("register", { 
+        title: "Spotterfy", 
+        error: e 
+      });
     }
   });
 
@@ -168,13 +176,75 @@ router
 router
   .route("/reserve")
   .get(async (req, res) => {
-    //code here for GET
+    let timesList = helpers.getTimesLists();
+    let d = new Date();
+    let year = d.getFullYear();
+    let fullDate = (d.getDate()<10 ? "0" : "") + d.getDate();
+    let month = d.getMonth();
+    let currentDate = `${year}-${month+1}-${fullDate}`
+    let oneYearFromToday = `${year+1}-${month+1}-${fullDate}`
     res.render("reserve", {
       title: "Spotterfy",
+      currentDate: currentDate,
+      oneYearFromToday: oneYearFromToday,
+      timesList: timesList,
     });
   })
   .post(async (req, res) => {
-    //code here for POST
+    let date = req.body.date;
+    let startTime = req.body.startTime;
+    let endTime = req.body.endTime;
+    let location = req.body.location;
+    let workouts = req.body.workouts;
+    let timesList = helpers.getTimesLists();
+    let d = new Date();
+    let year = d.getFullYear();
+    let fullDate = (d.getDate()<10 ? "0" : "") + d.getDate();
+    let month = d.getMonth();
+    let currentDate = `${year}-${month+1}-${fullDate}`
+    let oneYearFromToday = `${year+1}-${month+1}-${fullDate}`
+    try {
+        if (date === undefined) throw "Must provide date for reservation";
+        if (startTime === undefined) throw "Must provide start time for reservation";
+        if (endTime === undefined) throw "Must provide end time for reservatin";
+        if (location === undefined) throw "Must provide location for reservation";
+        if (workouts === undefined) throw "Must provide an option for workouts";
+        date = date.trim();
+        startTime = startTime.trim();
+        endTime = endTime.trim();
+        location = location.trim();
+        helpers.validReservation(date, startTime, endTime);
+        var createReservation = await users.createReservation(
+            req.session.user.email,
+            date,
+            startTime,
+            endTime,
+            location,
+            workouts
+        );
+    } catch(e) {
+        res.status(400).render("reserve", {
+            title: "Spotterfy", 
+            error: e, 
+            currentDate: currentDate, 
+            oneYearFromToday: oneYearFromToday,
+            timesList: timesList
+        });
+        return;
+    }
+    try {
+        if (createReservation.createdReservation === false) throw "Internal server error";
+        res.render("confirm", { title: "Spotterfy" });
+    } catch(e) {
+        res.status(500).render("reserve", { 
+            title: "Spotterfy", 
+            error: e,
+            currentDate: currentDate,
+            oneYearFromToday: oneYearFromToday,
+            timesList: timesList
+        });
+        return;
+    }
   });
 
 router.route("/homepage").get(async (req, res) => {
