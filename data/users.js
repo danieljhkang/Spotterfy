@@ -10,10 +10,10 @@ const saltRounds = 10;
 //creates a user and adds it to the mongo database, SETS VISIBILITY TO TRUE BY DEFAULT
 const createUser = async (firstName, lastName, email, cwid, year, password) => {
   // check user input
-  helpers.validString(firstName);
-  helpers.validString(lastName);
-  helpers.validCWID(cwid);
+  helpers.validString(firstName, "first name");
+  helpers.validString(lastName, "last name");
   helpers.validEmail(email);
+  helpers.validCWID(cwid);
   helpers.validPW(password);
 
   // check if user already exists
@@ -47,6 +47,50 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
   }
   return { insertedUser: true }; //dev
 };
+
+const createReservation = async (userEmail, date, startTime, endTime, location, workouts) => {
+    // Validate the input parameters
+    if (date === undefined) throw "Must provide date for reservation";
+    if (startTime === undefined) throw "Must provide start time for reservation";
+    if (endTime === undefined) throw "Must provide end time for reservatin";
+    if (location === undefined) throw "Must provide location for reservation";
+    if (workouts === undefined) throw "Must provide an option for workouts"
+    if (!Array.isArray(workouts)) workouts = [workouts]
+    helpers.validReservation(date, startTime, endTime);
+    let startTimeMilitary = helpers.convertTimeToMilitary(startTime);
+    let endTimeMilitary = helpers.convertTimeToMilitary(endTime);
+    // If a reservation in the same time frame already exists, it is invalid
+    const usersCollection = await users();
+    const userReservations = await usersCollection.findOne(
+        {email: userEmail},
+        {projection: {_id: 0, upcomingReservations: 1}}
+    );
+    let findMatchingReservation = userReservations.upcomingReservations.find((reservation) => {
+        // If the new reservation times INTERSECT with any existing reservation times
+        if (date === reservation.date) {
+            if (startTimeMilitary >= reservation.startTime && startTimeMilitary <= reservation.endTime) return true;
+            if (endTimeMilitary >= reservation.startTime && endTimeMilitary <= reservation.endTime) return true;
+            if (startTimeMilitary < reservation.startTime && endTimeMilitary > reservation.endTime) return true;
+        }
+        return false;
+    });
+    if (findMatchingReservation) throw "Already have reservation with these times";
+    // Create and insert a new reservation
+    const reservationId = new ObjectId();
+    let newReservation = {
+        _id: reservationId,
+        date: date,
+        startTime: startTimeMilitary,
+        endTime: endTimeMilitary,
+        workouts: workouts
+    }
+    const updatedInfo = await usersCollection.updateOne(
+        {email: userEmail},
+        {$push: {upcomingReservations: newReservation}}
+    );
+    if (updatedInfo.modifiedCount === 0) return { createdReservation: false }
+    else return { createdReservation: true }
+}
 
 /* Changes the visibility of a user and RETURNS THE UPDATED VISIBILITY */
 const switchVisibility = async (email) => {
@@ -119,6 +163,7 @@ const getUserByEmail = async (email) => {
 
 module.exports = {
   createUser,
+  createReservation,
   checkUserAuth,
   getFirstName,
   getUserByEmail,
