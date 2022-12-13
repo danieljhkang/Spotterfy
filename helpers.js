@@ -125,8 +125,6 @@ let validReservation = (date, startTime, endTime) => {
    
     // Check if the reservation time is in the past (only need to do so if the reservation date
     //   is the current date)
-    console.log(year, month, day);
-    console.log(currDate.getFullYear(), currDate.getMonth()+1, currDate.getDate());
     if (year === currDate.getFullYear() && month === currDate.getMonth()+1 && day === currDate.getDate()) {
         if (startHours < currDate.getHours() || (startHours === currDate.getHours() && startMinutes < currDate.getMinutes()))
             throw "Start time is invalid";

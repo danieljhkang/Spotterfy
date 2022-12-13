@@ -65,12 +65,19 @@ const createReservation = async (userEmail, date, startTime, endTime, location, 
         {email: userEmail},
         {projection: {_id: 0, upcomingReservations: 1}}
     );
+    let startSplit = startTimeMilitary.split(":").map((elem) => parseInt(elem));
+    let endSplit = endTimeMilitary.split(':').map((elem) => parseInt(elem));
+    let totalReservationMinutes = ((endSplit[0]-startSplit[0]) * 60) + (endSplit[1]-startSplit[1])
     let findMatchingReservation = userReservations.upcomingReservations.find((reservation) => {
         // If the new reservation times INTERSECT with any existing reservation times
         if (date === reservation.date) {
             if (startTimeMilitary >= reservation.startTime && startTimeMilitary <= reservation.endTime) return true;
             if (endTimeMilitary >= reservation.startTime && endTimeMilitary <= reservation.endTime) return true;
             if (startTimeMilitary < reservation.startTime && endTimeMilitary > reservation.endTime) return true;
+            startSplit = reservation.startTime.split(":").map((elem) => parseInt(elem));
+            endSplit = reservation.endTime.split(':').map((elem) => parseInt(elem));
+            totalReservationMinutes += ((endSplit[0]-startSplit[0]) * 60) + (endSplit[1]-startSplit[1])
+            if (totalReservationMinutes > 120) throw "You can only reserve a maxmium of two hours a day";
         }
         return false;
     });
