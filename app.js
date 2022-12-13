@@ -24,7 +24,7 @@ app.use(
 
 app.use("/profile", (req, res, next) => {
   if (!req.session.user) {
-    res.status(403).render("forbidden");
+    res.status(403).render("forbidden", {title: "Spotterfy", layout: "nonav"});
     return;
   } else {
     next();
@@ -33,7 +33,7 @@ app.use("/profile", (req, res, next) => {
 
 app.use("/homepage", (req, res, next) => {
   if (!req.session.user) {
-    res.status(403).render("forbidden");
+    res.status(403).render("forbidden", {title: "Spotterfy", layout: "nonav"});
     return;
   } else {
     next();
@@ -42,7 +42,7 @@ app.use("/homepage", (req, res, next) => {
 
 app.use("/reserve", (req, res, next) => {
   if (!req.session.user) {
-    res.status(403).render("forbidden");
+    res.status(403).render("forbidden", {title: "Spotterfy", layout: "nonav"});
     return;
   } else {
     next();
