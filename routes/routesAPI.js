@@ -17,6 +17,7 @@ router
     //code here for GET
     res.render("login", {
       title: "Spotterfy",
+      layout: "nonav"
     });
   })
   .post(async (req, res) => {
@@ -28,6 +29,7 @@ router
       res.status(400).render("login", {
         title: "Spotterfy",
         error: "You must supply both an email and a password",
+        layout: "nonav"
       });
       return;
     }
@@ -36,7 +38,7 @@ router
       helpers.validEmail(email);
       helpers.validPW(password);
     } catch (e) {
-      res.status(400).render("login", { title: "Spotterfy", error: e });
+      res.status(400).render("login", { title: "Spotterfy", error: e, layout: "nonav" });
       return;
     }
 
@@ -44,7 +46,7 @@ router
     try {
       loginUser = await userData.checkUserAuth(email, password);
     } catch (e) {
-      res.status(400).render("login", { title: "Spotterfy", error: e });
+      res.status(400).render("login", { title: "Spotterfy", error: e, layout: "nonav"});
       return;
     }
 
@@ -57,6 +59,7 @@ router
       res.status(400).render("login", {
         title: "Spotterfy",
         error: "Failed to authenticate user",
+        layout: "nonav"
       });
     }
   });
@@ -67,6 +70,7 @@ router
     //code here for GET
     res.render("register", {
       title: "Spotterfy",
+      layout: "nonav"
     });
   })
   /* Post route to verify user register data and submit post request to add to database */
@@ -98,14 +102,16 @@ router
       if (typeof createdUser === "undefined") {
         return res.status(500).render("register", {
             title: "Spotterfy", 
-            error: "Internal Server Error" 
+            error: "Internal Server Error",
+            layout: "nonav"
         });
       } 
       else res.redirect("/login");
     } catch (e) {
       return res.status(400).render("register", { 
         title: "Spotterfy", 
-        error: e 
+        error: e,
+        layout: "nonav"
       });
     }
   });
