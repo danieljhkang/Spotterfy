@@ -279,9 +279,6 @@ router.route("/homepage").get(async (req, res) => {
 
   let date = new Date().toUTCString().slice(0, 16);
   let visibleUsers = await userData.getVisibleUsers();
-  // let workoutsToDisplay = []
-  // for(object of visibleUsers)
-  //   for(object2 of object.upcomingReservations)
 
   try {
     res.render("homepage", {
@@ -289,6 +286,7 @@ router.route("/homepage").get(async (req, res) => {
       user_name: name,
       date: date,
       visibleUsers: visibleUsers,
+      workout: visibleUsers.upcomingReservations,
       userVisibility: visibilityView,
     });
   } catch (e) {

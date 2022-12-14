@@ -135,13 +135,13 @@ const main = async () => {
       currentRegisteredSCH: [],
     });
   }
-  try{
-    var c = await usersData.getVisibleUsers();
-    console.log(c)
-  }catch(e)
-  {
-    console.log(e)
-  }
+  // try{
+  //   var c = await usersData.getVisibleUsers();
+  //   console.log(c)
+  // }catch(e)
+  // {
+  //   console.log(e)
+  // }
 
   // await connection.closeConnection();
 };

@@ -95,7 +95,8 @@ let convertTimeToCivilian = (time) => {
         if (hours > 12) hours -= 12;
     }
     if (hours === 0) hours = 12;
-    return `${hours}:${minutes} ${meridiem}`
+    if (minutes === 0) return `${hours}:${minutes}0 ${meridiem}`
+    else return `${hours}:${minutes} ${meridiem}`
 }
 
 

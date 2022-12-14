@@ -21,7 +21,9 @@
     {{#each visibleUsers}}
       <p style="font-weight: bold;">{{firstName}} {{lastName}}</p>
       <p>Workout(s):</p>
-      <p>{{upcomingReservations}}</p>
+      {{#each upcomingReservations}}
+        <p>{{startTime}} - {{endTime}}: {{workouts}}</p>
+      {{/each}}
       <br>
     {{/each}}
   </p>
