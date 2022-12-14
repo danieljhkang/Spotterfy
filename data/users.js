@@ -265,6 +265,56 @@ const getUpcoming = async (email) => {
   return user.upcomingReservations;
 };
 
+// update previous reservations by moving past upcoming reservations to previous
+const updateReservations = async (email) => {
+  // get upcoming reservations
+  helpers.validEmail(email);
+  let upcoming = await getUpcoming(email);
+
+  // get user
+  const user = await getUserByEmail(email);
+
+  // get current date
+  let d = new Date();
+  let year = d.getFullYear();
+  let fullDate = (d.getDate() < 10 ? "0" : "") + d.getDate();
+  let month = d.getMonth();
+  let currentDate = `${year}-${month + 1}-${fullDate}`;
+  const today = new Date(currentDate);
+
+  // initialize upcoming and previous reservations
+  const updateUpcoming = user.upcomingReservations;
+  const updatePrevious = user.previousReservations;
+
+  upcoming.forEach((res) => {
+    let resDate = new Date(res.date);
+    // if before current date, remove from upcoming and add previous
+    if (resDate < today) {
+      updatePrevious.push(res);
+      let index = updateUpcoming.indexOf(res);
+      updateUpcoming.splice(index, 1);
+    }
+  });
+
+  // update reservations
+  const userCollection = await users();
+  let found = await userCollection.findOne({ email: email });
+  if (!found) throw "A user with this email doesn't exist";
+
+  const updatedInfo = await userCollection.updateOne(
+    { email: email },
+    {
+      $set: {
+        previousReservations: updatePrevious,
+        upcomingReservations: updateUpcoming,
+      },
+    }
+  );
+
+  if (updatedInfo.modifiedCount === 0) return { updateReservations: false };
+  else return { updateReservations: true };
+};
+
 const getVisibility = async (email) => {
   helpers.validEmail(email);
   let user = await getUserByEmail(email);
@@ -286,4 +336,5 @@ module.exports = {
   getVisibleUsers,
   getVisibility,
   getHotspot,
+  updateReservations,
 };

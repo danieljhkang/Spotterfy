@@ -268,6 +268,9 @@ router.route("/homepage").get(async (req, res) => {
   let remainingLetters = name.slice(1);
   name = firstLetter + remainingLetters;
 
+  // update user's reservations
+  let updateReservations = await userData.updateReservations(email);
+
   //For displaying the user's visibilty statement on the homepage
   let userVisibility = await userData.getVisibility(email);
   let visibilityView;
