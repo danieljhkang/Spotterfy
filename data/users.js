@@ -178,6 +178,8 @@ const switchVisibility = async (email) => {
 //   return usersWithWorkoutsToday;
 // }
 
+/* Returns array of all visible user objects with workouts for today
+and parses the objects to only return firstName, lastName, and upcoming Reservations*/
 const getVisibleUsers = async () => {
   const userCollection = await users();
   const visibleList = await userCollection

@@ -289,7 +289,7 @@ router.route("/homepage").get(async (req, res) => {
       user_name: name,
       date: date,
       visibleUsers: visibleUsers,
-      workout: visibleUsers.upcomingReservations,
+      usersWorkingOut: visibleUsers.length,
       userVisibility: visibilityView,
     });
   } catch (e) {

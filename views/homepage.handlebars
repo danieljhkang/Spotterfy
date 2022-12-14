@@ -2,27 +2,19 @@
   <h3>Hello, {{user_name}}</h3>
   <p>Today is {{date}}</p>
   <p1>Current Mode : {{userVisibility}}</p1>
-  <ul>
-    {{#each users}}
-      <li class="user-in-list">
-        <h2>s{{name}}</h2>
-        <p class="user-location">At {{location}}</p>
-        <p class="user-workouts">
-          {{#each workouts}}
-            {{this}}
-          {{/each}}
-        </p>
-      </li>
-    {{/each}}
-  </ul>
 <div class="visible-users">
-  <h3>Who's Working Out Today?</h3>
+  {{#if usersWorkingOut}}
+      <h2>Who's Working Out Today?</h2>
+  {{else}}
+      <h4 style="color:red;">NO PUBLIC USERS WORKING OUT</h4>
+  {{/if}}
   <p>
     {{#each visibleUsers}}
-      <p style="font-weight: bold;">{{firstName}} {{lastName}}</p>
-      <p>Workout(s):</p>
+      <h3 style="font-weight: bold;">{{firstName}} {{lastName}}</h3>
+      <h3>Workout(s):</h4>
       {{#each upcomingReservations}}
-        <p>{{startTime}} - {{endTime}}: {{workouts}}</p>
+        <p>{{startTime}} - {{endTime}} ({{location}}):</p>
+        <p>{{workouts}}</p>
       {{/each}}
       <br>
     {{/each}}
