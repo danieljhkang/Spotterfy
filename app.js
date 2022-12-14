@@ -81,58 +81,58 @@ const main = async () => {
     await hotspotsCollection.insertOne({
       day: "Sunday",
       weeksPast: 0,
-      registeredAverageUCC: [],
-      currentRegisteredUCC: [],
-      registeredAverageSCH: [],
-      currentRegisteredSCH: [],
+      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     });
     await hotspotsCollection.insertOne({
       day: "Monday",
       weeksPast: 0,
-      registeredAverageUCC: [],
-      currentRegisteredUCC: [],
-      registeredAverageSCH: [],
-      currentRegisteredSCH: [],
+      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     });
     await hotspotsCollection.insertOne({
       day: "Tuesday",
       weeksPast: 0,
-      registeredAverageUCC: [],
-      currentRegisteredUCC: [],
-      registeredAverageSCH: [],
-      currentRegisteredSCH: [],
+      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     });
     await hotspotsCollection.insertOne({
       day: "Wednesday",
       weeksPast: 0,
-      registeredAverageUCC: [],
-      currentRegisteredUCC: [],
-      registeredAverageSCH: [],
-      currentRegisteredSCH: [],
+      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     });
     await hotspotsCollection.insertOne({
       day: "Thursday",
       weeksPast: 0,
-      registeredAverageUCC: [],
-      currentRegisteredUCC: [],
-      registeredAverageSCH: [],
-      currentRegisteredSCH: [],
+      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     });
     await hotspotsCollection.insertOne({
       day: "Friday",
       weeksPast: 0,
-      registeredAverageUCC: [],
-      currentRegisteredUCC: [],
-      registeredAverageSCH: [],
-      currentRegisteredSCH: [],
+      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     });
     await hotspotsCollection.insertOne({
       day: "Saturday",
       weeksPast: 0,
-      registeredAverageUCC: [],
-      currentRegisteredUCC: [],
-      registeredAverageSCH: [],
-      currentRegisteredSCH: [],
+      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     });
   }
   // try{

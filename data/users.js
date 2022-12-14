@@ -124,10 +124,66 @@ const createReservation = async (
     location: location,
     workouts: workouts,
   };
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  let dateArray = date.split("-");
+  //0 -> year
+  //1 -> month
+  //2 -> day
+  let dateFormat = months[Number(dateArray[1])-1] + " " + dateArray[2] + " " + dateArray[0];
+  const d = new Date(dateFormat);
+  const day = days[d.getDay()];
+  //this is to add to the hotspots collection
+  const hotspotsCollection = await hotspots();
+
   const updatedInfo = await usersCollection.updateOne(
     { email: userEmail },
     { $push: { upcomingReservations: newReservation } }
   );
+
+  let startHour =  Number(startTimeMilitary.substring(0,2));
+  let endHour =  Number(endTimeMilitary.substring(0,2));
+  let timeDiff = endHour - startHour;
+  //[8am, 9am, 10am, 11am, 12pm, 1pm, 2pm, 3pm, 4pm, 5pm, 6pm, 7pm, 8pm, 9pm, 10pm, 11pm]
+  //add 1 in the array indexes in which the reservations reside (check the hours in the start time and end time)
+  //populate the array with zeros if there arn't any
+  if(location === "UCC"){
+    //if ucc
+    //get ucc average number for that hour
+    let avgUCCArray = await getHotspotArray(day, "UCC");
+    //add one to the index in which the reservations reside
+    if(timeDiff < 1){
+      avgUCCArray[startHour-8] = avgUCCArray[startHour-8] + 1;
+    }else if(timeDiff === 2){
+      avgUCCArray[startHour-8] = avgUCCArray[startHour-8] + 1;
+      avgUCCArray[endHour-9] = avgUCCArray[endHour-9] + 1;
+    }else{
+      avgUCCArray[startHour-8] = avgUCCArray[startHour-8] + 1;
+      avgUCCArray[endHour-8] = avgUCCArray[endHour-8] + 1;
+    }
+    const updatedAverage = await hotspotsCollection.updateOne(
+      {day: day},
+      {$set: {registeredAverageUCC: avgUCCArray}}
+    )
+  }else{
+    //if schaefer
+    //get schaefer average number for that hour
+    let avgSCHArray = await getHotspotArray(day, "Schaefer");
+    if(timeDiff < 1){
+      avgSCHArray[startHour-8] = avgSCHArray[startHour-8] + 1;
+    }else if(timeDiff === 2){
+      avgSCHArray[startHour-8] = avgSCHArray[startHour-8] + 1;
+      avgSCHArray[endHour-9] = avgSCHArray[endHour-9] + 1;
+    }else{
+      avgSCHArray[startHour-8] = avgSCHArray[startHour-8] + 1;
+      avgSCHArray[endHour-8] = avgSCHArray[endHour-8] + 1;
+    }
+    const updatedAverage = await hotspotsCollection.updateOne(
+      {day: day},
+      {$set:{registeredAverageSCH: avgSCHArray}}
+    )
+  }
+
   if (updatedInfo.modifiedCount === 0) return { createdReservation: false };
   else return { createdReservation: true };
 };
@@ -329,9 +385,16 @@ const getVisibility = async (email) => {
   return user.visible;
 };
 
-const getHotspot = async (location) => {
+const getHotspotArray = async (day, location) => {
   const hotspotsCollection = await hotspots();
-};
+  let dayObject = await hotspotsCollection.findOne({ day: day });
+  if(location === "UCC"){
+    return dayObject.registeredAverageUCC;
+  }else{
+    return dayObject.registeredAverageSCH;
+  }
+ }
+ 
 
 module.exports = {
   createUser,
@@ -343,6 +406,6 @@ module.exports = {
   switchVisibility,
   getVisibleUsers,
   getVisibility,
-  getHotspot,
+  getHotspotArray,
   updateReservations,
 };
