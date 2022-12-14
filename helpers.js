@@ -86,7 +86,7 @@ let validString = (str, varName) => {
 
 /* Takes a time in miiltary format and converts it to cilivian format "hh:mm [AM/PM]" */
 let convertTimeToCivilian = (time) => {
-    time = time.split(':');
+    time = time.toLowerCase().split(':');
     let meridiem = "AM";
     let hours = parseInt(time[0]);
     let minutes = parseInt(time[1]);
@@ -101,18 +101,31 @@ let convertTimeToCivilian = (time) => {
 
 /* Takes a time in civilian format "hh:mm [AM/PM]" and returns it in military format */
 let convertTimeToMilitary = (time) => {
-    time = time.split(" ");
+    time = time.toLowerCase().split(" ");
     let timeValue = time[0].split(':');
-    let hours = parseInt(timeValue[0]) + (time[1]==='PM' && hours < 12 ? 12 : 0);
+    let hours = parseInt(timeValue[0])
+    hours += (time[1]==='pm' && hours < 12 ? 12 : 0);
     let minutes = parseInt(timeValue[1]);
-    if (hours === 12 && time[1] === 'AM') hours = 0;
+    if (hours === 12 && time[1] === 'am') hours = 0;
     return `${hours<10 ? '0' : ''}${hours}:${minutes<10 ? '0' : ''}${minutes}`;
-}   
+}
+
+
+let validTime = (time, type) => {
+    time = validString(time, type);
+    if (!/^\d{1,2}:\d{2} (am|pm)$/.test(time)) throw `${type} must be in the format hh:mm (AM|PM)`;
+    splitTime = time.split(' ');
+    let [ hours, minutes ] = splitTime[0].split(':').map((elem) => parseInt(elem));
+    if (hours < 1 || hours > 12 || minutes < 0 || minutes >= 60) throw "Reservation time is invalid";
+    return time;
+}
 
 
 let validReservation = (date, startTime, endTime) => {
     let currDate = new Date();    
     let [year, month, day] = date.split('-');
+    startTime = validTime(startTime, "Start time");
+    endTime = validTime(endTime, "End time");
 
     // Check if the date is valid
     if (year < currDate.getFullYear()) throw "Date is invalid";
@@ -122,6 +135,8 @@ let validReservation = (date, startTime, endTime) => {
     // Split given times into their separate parts (hours, minutes, AM/PM)
     let [ startHours, startMinutes ] = convertTimeToMilitary(startTime).split(':');
     let [ endHours, endMinutes ] = convertTimeToMilitary(endTime).split(':'); 
+    if (startHours < 8) throw 'Reservation must start after 8 AM';
+    if (endHours >= 23 && minutes > 0) throw 'Reservation must end before 11 PM';
    
     // Check if the reservation time is in the past (only need to do so if the reservation date
     //   is the current date)
@@ -143,7 +158,7 @@ let validReservation = (date, startTime, endTime) => {
 let getTimesLists = () => {
     const minuteIncrement = 20;
     const minutesInDay = 24 * 60;
-    let hours = 0;
+    let hours = 8;
     let minutes = 0;
     let timesList = [];
     while (timesList.length < Math.trunc(minutesInDay/minuteIncrement)) {
