@@ -27,10 +27,15 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
   // hash password using bcrypt
   const hash = await bcrypt.hash(password, saltRounds);
 
+  firstName = firstName.toLowerCase();
+  lastName = lastName.toLowerCase();
+  let capitalizedFirst = firstName.charAt(0).toUpperCase() + firstName.substring(1);
+  let capitalizedLast = lastName.charAt(0).toUpperCase() + lastName.substring(1);
+
   let newUser = {
     cwid: cwid,
-    firstName: firstName.toLowerCase().trim(),
-    lastName: lastName.toLowerCase().trim(),
+    firstName: capitalizedFirst,
+    lastName: capitalizedLast,
     email: email.toLowerCase().trim(),
     hashPassword: hash,
     year: year,
@@ -116,6 +121,7 @@ const createReservation = async (
     date: date,
     startTime: startTimeMilitary,
     endTime: endTimeMilitary,
+    location: location,
     workouts: workouts,
   };
   const updatedInfo = await usersCollection.updateOne(

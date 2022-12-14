@@ -11,9 +11,9 @@
   <p>
     {{#each visibleUsers}}
       <h3 style="font-weight: bold;">{{firstName}} {{lastName}}</h3>
-      <h3>Workout(s):</h4>
+      <h3 style="font-weight: bold;">Workout(s):</h3>
       {{#each upcomingReservations}}
-        <p>{{startTime}} - {{endTime}} ({{location}}):</p>
+        <p style="font-weight: bold; font-style: italic">{{startTime}} - {{endTime}} ({{location}}):</p>
         <p>{{workouts}}</p>
       {{/each}}
       <br>
