@@ -262,6 +262,15 @@ router.route("/homepage").get(async (req, res) => {
   let remainingLetters = name.slice(1);
   name = firstLetter + remainingLetters;
 
+  //For displaying the user's visibilty statement on the homepage
+  let userVisibility = await userData.getVisibility(email);
+  let visibilityView;
+  if(userVisibility){
+    visibilityView = "Public";
+  }else{
+    visibilityView = "Private";
+  }
+
   let date = new Date().toUTCString().slice(0, 16);
   let visibleUsers = await userData.getVisibleUsers();
   try {
@@ -270,6 +279,7 @@ router.route("/homepage").get(async (req, res) => {
       user_name: name,
       date: date,
       visibleUsers: visibleUsers,
+      userVisibility: visibilityView,
     });
   } catch (e) {
     return res.status(400).json({ error: e });

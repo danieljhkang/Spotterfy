@@ -168,6 +168,12 @@ const getUserByEmail = async (email) => {
   return user;
 };
 
+const getVisibility = async (email) => {
+  helpers.validEmail(email);
+  let user = getUserByEmail(email);
+  return user.visibile;
+}
+
 module.exports = {
   createUser,
   createReservation,
@@ -175,5 +181,6 @@ module.exports = {
   getFirstName,
   getUserByEmail,
   switchVisibility,
-  getVisibleUsers
+  getVisibleUsers,
+  getVisibility
 };
