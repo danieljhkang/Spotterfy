@@ -48,83 +48,109 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
   return { insertedUser: true }; //dev
 };
 
-const createReservation = async (userEmail, date, startTime, endTime, location, workouts) => {
-    // Validate the input parameters
-    if (date === undefined) throw "Must provide date for reservation";
-    if (startTime === undefined) throw "Must provide start time for reservation";
-    if (endTime === undefined) throw "Must provide end time for reservatin";
-    if (location === undefined) throw "Must provide location for reservation";
-    if (workouts === undefined) throw "Must provide an option for workouts"
-    if (!Array.isArray(workouts)) workouts = [workouts]
-    helpers.validReservation(date, startTime, endTime);
-    let startTimeMilitary = helpers.convertTimeToMilitary(startTime);
-    let endTimeMilitary = helpers.convertTimeToMilitary(endTime);
-    // If a reservation in the same time frame already exists, it is invalid
-    const usersCollection = await users();
-    const userReservations = await usersCollection.findOne(
-        {email: userEmail},
-        {projection: {_id: 0, upcomingReservations: 1}}
-    );
-    let startSplit = startTimeMilitary.split(":").map((elem) => parseInt(elem));
-    let endSplit = endTimeMilitary.split(':').map((elem) => parseInt(elem));
-    let totalReservationMinutes = ((endSplit[0]-startSplit[0]) * 60) + (endSplit[1]-startSplit[1])
-    let findMatchingReservation = userReservations.upcomingReservations.find((reservation) => {
-        // If the new reservation times INTERSECT with any existing reservation times
-        if (date === reservation.date) {
-            if (startTimeMilitary >= reservation.startTime && startTimeMilitary <= reservation.endTime) return true;
-            if (endTimeMilitary >= reservation.startTime && endTimeMilitary <= reservation.endTime) return true;
-            if (startTimeMilitary < reservation.startTime && endTimeMilitary > reservation.endTime) return true;
-            startSplit = reservation.startTime.split(":").map((elem) => parseInt(elem));
-            endSplit = reservation.endTime.split(':').map((elem) => parseInt(elem));
-            totalReservationMinutes += ((endSplit[0]-startSplit[0]) * 60) + (endSplit[1]-startSplit[1])
-            if (totalReservationMinutes > 120) throw "You can only reserve a maxmium of two hours a day";
-        }
-        return false;
-    });
-    if (findMatchingReservation) throw "Already have reservation with these times";
-    // Create and insert a new reservation
-    const reservationId = new ObjectId();
-    let newReservation = {
-        _id: reservationId,
-        date: date,
-        startTime: startTimeMilitary,
-        endTime: endTimeMilitary,
-        workouts: workouts
+const createReservation = async (
+  userEmail,
+  date,
+  startTime,
+  endTime,
+  location,
+  workouts
+) => {
+  // Validate the input parameters
+  if (date === undefined) throw "Must provide date for reservation";
+  if (startTime === undefined) throw "Must provide start time for reservation";
+  if (endTime === undefined) throw "Must provide end time for reservatin";
+  if (location === undefined) throw "Must provide location for reservation";
+  if (workouts === undefined) throw "Must provide an option for workouts";
+  if (!Array.isArray(workouts)) workouts = [workouts];
+  helpers.validReservation(date, startTime, endTime);
+  let startTimeMilitary = helpers.convertTimeToMilitary(startTime);
+  let endTimeMilitary = helpers.convertTimeToMilitary(endTime);
+  // If a reservation in the same time frame already exists, it is invalid
+  const usersCollection = await users();
+  const userReservations = await usersCollection.findOne(
+    { email: userEmail },
+    { projection: { _id: 0, upcomingReservations: 1 } }
+  );
+  let startSplit = startTimeMilitary.split(":").map((elem) => parseInt(elem));
+  let endSplit = endTimeMilitary.split(":").map((elem) => parseInt(elem));
+  let totalReservationMinutes =
+    (endSplit[0] - startSplit[0]) * 60 + (endSplit[1] - startSplit[1]);
+  let findMatchingReservation = userReservations.upcomingReservations.find(
+    (reservation) => {
+      // If the new reservation times INTERSECT with any existing reservation times
+      if (date === reservation.date) {
+        if (
+          startTimeMilitary >= reservation.startTime &&
+          startTimeMilitary <= reservation.endTime
+        )
+          return true;
+        if (
+          endTimeMilitary >= reservation.startTime &&
+          endTimeMilitary <= reservation.endTime
+        )
+          return true;
+        if (
+          startTimeMilitary < reservation.startTime &&
+          endTimeMilitary > reservation.endTime
+        )
+          return true;
+        startSplit = reservation.startTime
+          .split(":")
+          .map((elem) => parseInt(elem));
+        endSplit = reservation.endTime.split(":").map((elem) => parseInt(elem));
+        totalReservationMinutes +=
+          (endSplit[0] - startSplit[0]) * 60 + (endSplit[1] - startSplit[1]);
+        if (totalReservationMinutes > 120)
+          throw "You can only reserve a maxmium of two hours a day";
+      }
+      return false;
     }
-    const updatedInfo = await usersCollection.updateOne(
-        {email: userEmail},
-        {$push: {upcomingReservations: newReservation}}
-    );
-    if (updatedInfo.modifiedCount === 0) return { createdReservation: false }
-    else return { createdReservation: true }
-}
+  );
+  if (findMatchingReservation)
+    throw "Already have reservation with these times";
+  // Create and insert a new reservation
+  const reservationId = new ObjectId();
+  let newReservation = {
+    _id: reservationId,
+    date: date,
+    startTime: startTimeMilitary,
+    endTime: endTimeMilitary,
+    workouts: workouts,
+  };
+  const updatedInfo = await usersCollection.updateOne(
+    { email: userEmail },
+    { $push: { upcomingReservations: newReservation } }
+  );
+  if (updatedInfo.modifiedCount === 0) return { createdReservation: false };
+  else return { createdReservation: true };
+};
 
 /* Changes the visibility of a user and RETURNS THE UPDATED VISIBILITY */
 const switchVisibility = async (email) => {
   helpers.validEmail(email);
   const userCollection = await users();
-  let found = await userCollection.findOne({email: email});
-  if(!found)
-    throw "A user with this email doesn't exist"
+  let found = await userCollection.findOne({ email: email });
+  if (!found) throw "A user with this email doesn't exist";
 
   const updatedInfo = await userCollection.updateOne(
-    {email: email},
-    {$set: {visible: !found.visible}}
+    { email: email },
+    { $set: { visible: !found.visible } }
   );
 
   if (updatedInfo.modifiedCount === 0) {
-    throw 'could not update visibility successfully';
+    throw "could not update visibility successfully";
   }
 
   //Returns updated user visibility
   return !found.visible;
-}
+};
 
 /* Returns array of all visible user objects to display on homepage, each object in the array is parsed to include only first/last names and upcomingReservations */
 // const getVisibleUsers = async () =>{
 //   const userCollection = await users();
 //   const visibleList = await userCollection.find({visible: true}).project({firstName: 1, lastName: 1, upcomingReservations: 1, _id: 0}).toArray();
-//   if (!visibleList) 
+//   if (!visibleList)
 //     throw 'Could not get all visible users';
 
 //   let usersWithWorkoutsToday = [];
@@ -140,7 +166,7 @@ const switchVisibility = async (email) => {
 //       if(workout.date === currentDate){
 //         todaysWorkouts.push(workout)
 //       }
-    
+
 //     visibleList[i].upcomingReservations = todaysWorkouts;
 //     todaysWorkouts = []
 //   }
@@ -148,49 +174,51 @@ const switchVisibility = async (email) => {
 //   for(user of visibleList)
 //     if(user.upcomingReservations.length !== 0)
 //       usersWithWorkoutsToday.push(user)
-  
+
 //   return usersWithWorkoutsToday;
 // }
 
-
-const getVisibleUsers = async () =>{
+const getVisibleUsers = async () => {
   const userCollection = await users();
-  const visibleList = await userCollection.find({visible: true}).project({firstName: 1, lastName: 1, upcomingReservations: 1, _id: 0}).toArray();
-  if (!visibleList) 
-    throw 'Could not get all visible users';
+  const visibleList = await userCollection
+    .find({ visible: true })
+    .project({ firstName: 1, lastName: 1, upcomingReservations: 1, _id: 0 })
+    .toArray();
+  if (!visibleList) throw "Could not get all visible users";
 
   let usersWithWorkoutsToday = [];
-  let todaysWorkouts = []
+  let todaysWorkouts = [];
   let d = new Date();
   let year = d.getFullYear();
-  let fullDate = (d.getDate()<10 ? "0" : "") + d.getDate();
+  let fullDate = (d.getDate() < 10 ? "0" : "") + d.getDate();
   let month = d.getMonth();
-  let currentDate = `${year}-${month+1}-${fullDate}`
+  let currentDate = `${year}-${month + 1}-${fullDate}`;
 
-  for(let i = 0; i < visibleList.length; i++){
-    for(let j = 0; j < visibleList[i].upcomingReservations.length; j++){
-      if(visibleList[i].upcomingReservations[j].date === currentDate){
-        visibleList[i].upcomingReservations[j].startTime = helpers.convertTimeToCivilian(visibleList[i].upcomingReservations[j].startTime);
-        visibleList[i].upcomingReservations[j].endTime = helpers.convertTimeToCivilian(visibleList[i].upcomingReservations[j].endTime);
-        todaysWorkouts.push(visibleList[i].upcomingReservations[j])
-    }
+  for (let i = 0; i < visibleList.length; i++) {
+    for (let j = 0; j < visibleList[i].upcomingReservations.length; j++) {
+      if (visibleList[i].upcomingReservations[j].date === currentDate) {
+        visibleList[i].upcomingReservations[j].startTime =
+          helpers.convertTimeToCivilian(
+            visibleList[i].upcomingReservations[j].startTime
+          );
+        visibleList[i].upcomingReservations[j].endTime =
+          helpers.convertTimeToCivilian(
+            visibleList[i].upcomingReservations[j].endTime
+          );
+        todaysWorkouts.push(visibleList[i].upcomingReservations[j]);
       }
+    }
     visibleList[i].upcomingReservations = todaysWorkouts;
-    todaysWorkouts = []
+    todaysWorkouts = [];
   }
 
-  for(user of visibleList){
-    if(user.upcomingReservations.length !== 0)
-      usersWithWorkoutsToday.push(user)
+  for (user of visibleList) {
+    if (user.upcomingReservations.length !== 0)
+      usersWithWorkoutsToday.push(user);
   }
-  
-  
+
   return usersWithWorkoutsToday;
-}
-
-
-
-
+};
 
 //checks to see if the user is currently authenticated
 const checkUserAuth = async (email, password) => {
@@ -230,16 +258,22 @@ const getUserByEmail = async (email) => {
   return user;
 };
 
+// get upcoming reservations of user
+const getUpcoming = async (email) => {
+  helpers.validEmail(email);
+  let user = await getUserByEmail(email);
+  return user.upcomingReservations;
+};
+
 const getVisibility = async (email) => {
   helpers.validEmail(email);
   let user = await getUserByEmail(email);
   return user.visible;
-}
+};
 
 const getHotspot = async (location) => {
-
   const hotspotsCollection = await hotspots();
-}
+};
 
 module.exports = {
   createUser,
@@ -247,6 +281,7 @@ module.exports = {
   checkUserAuth,
   getFirstName,
   getUserByEmail,
+  getUpcoming,
   switchVisibility,
   getVisibleUsers,
   getVisibility,

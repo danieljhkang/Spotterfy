@@ -61,7 +61,7 @@ let validPW = (password) => {
 };
 
 // check cwid
-const validCWID = (cwid) => {
+let validCWID = (cwid) => {
   // cwid must be supplied
   if (!cwid) throw "Please provide CWID";
   // cwid should be a valid string (no empty spaces, no spaces in cwid, and only numbers) and only 8 characters long
@@ -86,94 +86,114 @@ let validString = (str, varName) => {
 
 /* Takes a time in miiltary format and converts it to cilivian format "hh:mm [AM/PM]" */
 let convertTimeToCivilian = (time) => {
-    time = time.toLowerCase().split(':');
-    let meridiem = "AM";
-    let hours = parseInt(time[0]);
-    let minutes = parseInt(time[1]);
-    if (hours >= 12) {
-        meridiem = "PM";
-        if (hours > 12) hours -= 12;
-    }
-    if (hours === 0) hours = 12;
-    if (minutes === 0) return `${hours}:${minutes}0 ${meridiem}`
-    else return `${hours}:${minutes} ${meridiem}`
-}
-
+  time = time.toLowerCase().split(":");
+  let meridiem = "AM";
+  let hours = parseInt(time[0]);
+  let minutes = parseInt(time[1]);
+  if (hours >= 12) {
+    meridiem = "PM";
+    if (hours > 12) hours -= 12;
+  }
+  if (hours === 0) hours = 12;
+  if (minutes === 0) return `${hours}:${minutes}0 ${meridiem}`;
+  else return `${hours}:${minutes} ${meridiem}`;
+};
 
 /* Takes a time in civilian format "hh:mm [AM/PM]" and returns it in military format */
 let convertTimeToMilitary = (time) => {
-    time = time.toLowerCase().split(" ");
-    let timeValue = time[0].split(':');
-    let hours = parseInt(timeValue[0])
-    hours += (time[1]==='pm' && hours < 12 ? 12 : 0);
-    let minutes = parseInt(timeValue[1]);
-    if (hours === 12 && time[1] === 'am') hours = 0;
-    return `${hours<10 ? '0' : ''}${hours}:${minutes<10 ? '0' : ''}${minutes}`;
-}
-
+  time = time.toLowerCase().split(" ");
+  let timeValue = time[0].split(":");
+  let hours = parseInt(timeValue[0]);
+  hours += time[1] === "pm" && hours < 12 ? 12 : 0;
+  let minutes = parseInt(timeValue[1]);
+  if (hours === 12 && time[1] === "am") hours = 0;
+  return `${hours < 10 ? "0" : ""}${hours}:${
+    minutes < 10 ? "0" : ""
+  }${minutes}`;
+};
 
 let validTime = (time, type) => {
-    time = validString(time, type);
-    if (!/^\d{1,2}:\d{2} (am|pm)$/.test(time)) throw `${type} must be in the format hh:mm (AM|PM)`;
-    splitTime = time.split(' ');
-    let [ hours, minutes ] = splitTime[0].split(':').map((elem) => parseInt(elem));
-    if (hours < 1 || hours > 12 || minutes < 0 || minutes >= 60) throw "Reservation time is invalid";
-    return time;
-}
-
+  time = validString(time, type);
+  if (!/^\d{1,2}:\d{2} (am|pm)$/.test(time))
+    throw `${type} must be in the format hh:mm (AM|PM)`;
+  splitTime = time.split(" ");
+  let [hours, minutes] = splitTime[0].split(":").map((elem) => parseInt(elem));
+  if (hours < 1 || hours > 12 || minutes < 0 || minutes >= 60)
+    throw "Reservation time is invalid";
+  return time;
+};
 
 let validReservation = (date, startTime, endTime) => {
-    let currDate = new Date();    
-    let [year, month, day] = date.split('-');
-    startTime = validTime(startTime, "Start time");
-    endTime = validTime(endTime, "End time");
+  let currDate = new Date();
+  let [year, month, day] = date.split("-");
+  startTime = validTime(startTime, "Start time");
+  endTime = validTime(endTime, "End time");
 
-    // Check if the date is valid
-    if (year < currDate.getFullYear()) throw "Date is invalid";
-    if (year === currDate.getFullYear() && month < currDate.getMonth()+1) throw "Date is invalid";
-    if (month === currDate.getMonth()+1 && day < currDate.getDate()) throw "Date is invalid";
-   
-    // Split given times into their separate parts (hours, minutes, AM/PM)
-    let [ startHours, startMinutes ] = convertTimeToMilitary(startTime).split(':');
-    let [ endHours, endMinutes ] = convertTimeToMilitary(endTime).split(':'); 
-    if (startHours < 8) throw 'Reservation must start after 8 AM';
-    if (endHours >= 23 && minutes > 0) throw 'Reservation must end before 11 PM';
-   
-    // Check if the reservation time is in the past (only need to do so if the reservation date
-    //   is the current date)
-    if (year === currDate.getFullYear() && month === currDate.getMonth()+1 && day === currDate.getDate()) {
-        if (startHours < currDate.getHours() || (startHours === currDate.getHours() && startMinutes < currDate.getMinutes()))
-            throw "Start time is invalid";
-        if (endHours < currDate.getHours() || (endHours === currDate.getHours() && endMinutes < currDate.getMinutes()))
-            throw "End time is invalid";
-    }
-    // Check if end time is before start time
-    if (endHours < startHours || (endHours === startHours && endMinutes < startMinutes)) 
-        throw "The start time for reservation must come before end time";
-    if (startHours === endHours && startMinutes === endMinutes)
-        throw "You must reserve a minimum of 20 minutes";
-    if (endHours - startHours > 2 || (endHours === startHours && endMinutes < startMinutes))
-        throw "Cannot reserve more than two hours at a time";
-}
+  // Check if the date is valid
+  if (year < currDate.getFullYear()) throw "Date is invalid";
+  if (year === currDate.getFullYear() && month < currDate.getMonth() + 1)
+    throw "Date is invalid";
+  if (month === currDate.getMonth() + 1 && day < currDate.getDate())
+    throw "Date is invalid";
+
+  // Split given times into their separate parts (hours, minutes, AM/PM)
+  let [startHours, startMinutes] = convertTimeToMilitary(startTime).split(":");
+  let [endHours, endMinutes] = convertTimeToMilitary(endTime).split(":");
+  if (startHours < 8) throw "Reservation must start after 8 AM";
+  if (endHours >= 23 && minutes > 0) throw "Reservation must end before 11 PM";
+
+  // Check if the reservation time is in the past (only need to do so if the reservation date
+  //   is the current date)
+  if (
+    year === currDate.getFullYear() &&
+    month === currDate.getMonth() + 1 &&
+    day === currDate.getDate()
+  ) {
+    if (
+      startHours < currDate.getHours() ||
+      (startHours === currDate.getHours() &&
+        startMinutes < currDate.getMinutes())
+    )
+      throw "Start time is invalid";
+    if (
+      endHours < currDate.getHours() ||
+      (endHours === currDate.getHours() && endMinutes < currDate.getMinutes())
+    )
+      throw "End time is invalid";
+  }
+  // Check if end time is before start time
+  if (
+    endHours < startHours ||
+    (endHours === startHours && endMinutes < startMinutes)
+  )
+    throw "The start time for reservation must come before end time";
+  if (startHours === endHours && startMinutes === endMinutes)
+    throw "You must reserve a minimum of 20 minutes";
+  if (
+    endHours - startHours > 2 ||
+    (endHours === startHours && endMinutes < startMinutes)
+  )
+    throw "Cannot reserve more than two hours at a time";
+};
 
 let getTimesLists = () => {
-    const minuteIncrement = 20;
-    const minutesInDay = 24 * 60;
-    let hours = 8;
-    let minutes = 0;
-    let timesList = [];
-    while (timesList.length < Math.trunc(minutesInDay/minuteIncrement)) {
-        let time = "";
-        time += hours%12===0 ? "12" : hours%12;     // Convert hours from military
-        time += ":";
-        time += (minutes<10 ? "0" : "") + minutes;  // Add leading 0 to single digit minutes
-        time += " " + (hours<12 ? "AM" : "PM");     // If hours < 12, AM; else, PM
-        timesList.push(time);
-        minutes = (minutes + minuteIncrement) % 60; // Increase minutes by increment
-        hours = minutes===0 ? hours+1 : hours;      // If minutes hits 0, signifies hour change
-    }
-    return timesList;
-}
+  const minuteIncrement = 20;
+  const minutesInDay = 24 * 60;
+  let hours = 8;
+  let minutes = 0;
+  let timesList = [];
+  while (timesList.length < Math.trunc(minutesInDay / minuteIncrement)) {
+    let time = "";
+    time += hours % 12 === 0 ? "12" : hours % 12; // Convert hours from military
+    time += ":";
+    time += (minutes < 10 ? "0" : "") + minutes; // Add leading 0 to single digit minutes
+    time += " " + (hours < 12 ? "AM" : "PM"); // If hours < 12, AM; else, PM
+    timesList.push(time);
+    minutes = (minutes + minuteIncrement) % 60; // Increase minutes by increment
+    hours = minutes === 0 ? hours + 1 : hours; // If minutes hits 0, signifies hour change
+  }
+  return timesList;
+};
 
 module.exports = {
   validUsername,
