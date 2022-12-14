@@ -170,8 +170,13 @@ const getUserByEmail = async (email) => {
 
 const getVisibility = async (email) => {
   helpers.validEmail(email);
-  let user = getUserByEmail(email);
-  return user.visibile;
+  let user = await getUserByEmail(email);
+  return user.visible;
+}
+
+const getHotspot = async (location) => {
+
+  const hotspotsCollection = await hotspots();
 }
 
 module.exports = {
@@ -182,5 +187,6 @@ module.exports = {
   getUserByEmail,
   switchVisibility,
   getVisibleUsers,
-  getVisibility
+  getVisibility,
+  getHotspot,
 };
