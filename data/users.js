@@ -127,7 +127,29 @@ const getVisibleUsers = async () =>{
   if (!visibleList) 
     throw 'Could not get all visible users';
 
-  return visibleList;
+  let usersWithWorkoutsToday = [];
+  let todaysWorkouts = []
+  let d = new Date();
+  let year = d.getFullYear();
+  let fullDate = (d.getDate()<10 ? "0" : "") + d.getDate();
+  let month = d.getMonth();
+  let currentDate = `${year}-${month+1}-${fullDate}`
+
+  for(let i = 0; i < visibleList.length; i++){
+    for(workout of visibleList[i].upcomingReservations)
+      if(workout.date === currentDate){
+        todaysWorkouts.push(workout)
+      }
+    
+    visibleList[i].upcomingReservations = todaysWorkouts;
+    todaysWorkouts = []
+  }
+
+  for(user of visibleList)
+    if(user.upcomingReservations.length !== 0)
+      usersWithWorkoutsToday.push(user)
+  
+  return usersWithWorkoutsToday;
 }
 
 //checks to see if the user is currently authenticated

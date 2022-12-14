@@ -279,6 +279,10 @@ router.route("/homepage").get(async (req, res) => {
 
   let date = new Date().toUTCString().slice(0, 16);
   let visibleUsers = await userData.getVisibleUsers();
+  // let workoutsToDisplay = []
+  // for(object of visibleUsers)
+  //   for(object2 of object.upcomingReservations)
+
   try {
     res.render("homepage", {
       title: "Spotterfy",
