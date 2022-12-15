@@ -32,7 +32,7 @@
                 <h3 id="visible-users"><u>{{firstName}} {{lastName}}</u></h3>
                 <h4 id="workout-list">Workout(s):</h4>
                 {{#each upcomingReservations}}
-                    <p id="reservation-info">{{startTime}} - {{endTime}} ({{location}})</p>
+                    <p id="reservation-info"><b><i>{{startTime}} - {{endTime}} ({{location}})</i></b></p>
                     {{#if workouts}}
                     <p>{{workouts}}</p>
                     {{/if}}

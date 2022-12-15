@@ -154,38 +154,6 @@ const switchVisibility = async (email) => {
   return !found.visible;
 };
 
-/* Returns array of all visible user objects to display on homepage, each object in the array is parsed to include only first/last names and upcomingReservations */
-// const getVisibleUsers = async () =>{
-//   const userCollection = await users();
-//   const visibleList = await userCollection.find({visible: true}).project({firstName: 1, lastName: 1, upcomingReservations: 1, _id: 0}).toArray();
-//   if (!visibleList)
-//     throw 'Could not get all visible users';
-
-//   let usersWithWorkoutsToday = [];
-//   let todaysWorkouts = []
-//   let d = new Date();
-//   let year = d.getFullYear();
-//   let fullDate = (d.getDate()<10 ? "0" : "") + d.getDate();
-//   let month = d.getMonth();
-//   let currentDate = `${year}-${month+1}-${fullDate}`
-
-//   for(let i = 0; i < visibleList.length; i++){
-//     for(workout of visibleList[i].upcomingReservations)
-//       if(workout.date === currentDate){
-//         todaysWorkouts.push(workout)
-//       }
-
-//     visibleList[i].upcomingReservations = todaysWorkouts;
-//     todaysWorkouts = []
-//   }
-
-//   for(user of visibleList)
-//     if(user.upcomingReservations.length !== 0)
-//       usersWithWorkoutsToday.push(user)
-
-//   return usersWithWorkoutsToday;
-// }
-
 /* Returns array of all visible user objects with workouts for today
 and parses the objects to only return firstName, lastName, and upcoming Reservations*/
 const getVisibleUsers = async () => {
@@ -202,21 +170,12 @@ const getVisibleUsers = async () => {
   let year = d.getFullYear();
   let fullDate = (d.getDate() < 10 ? "0" : "") + d.getDate();
   let month = d.getMonth();
-  let currentDate = `${year}-${month + 1}-${fullDate}`;
+  let currentDate = `${year}/${month + 1}/${fullDate}`;
 
   for (let i = 0; i < visibleList.length; i++) {
     for (let j = 0; j < visibleList[i].upcomingReservations.length; j++) {
-      if (visibleList[i].upcomingReservations[j].date === currentDate) {
-        visibleList[i].upcomingReservations[j].startTime =
-          helpers.convertTimeToCivilian(
-            visibleList[i].upcomingReservations[j].startTime
-          );
-        visibleList[i].upcomingReservations[j].endTime =
-          helpers.convertTimeToCivilian(
-            visibleList[i].upcomingReservations[j].endTime
-          );
+      if (visibleList[i].upcomingReservations[j].date === currentDate) 
         todaysWorkouts.push(visibleList[i].upcomingReservations[j]);
-      }
     }
     visibleList[i].upcomingReservations = todaysWorkouts;
     todaysWorkouts = [];
