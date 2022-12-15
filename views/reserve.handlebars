@@ -9,19 +9,19 @@
             <label>Date</label>
             <input type="date" id="date" value={{currentDate}} min={{currentDate}} max={{oneYearFromToday}} name="date">
             <label for="startTime">Start Time</label>
-            <input list="startTimes" id="startTime" name="startTime">
-            <datalist id="startTimes">
+            <select id="startTime" name="startTime">
+                <option value=""></option>
                 {{#each timesList}}
-                <option value="{{this}}">
+                <option value="{{this}}">{{this}}</option>
                 {{/each}}
-            </datalist>
+            </select>
             <label for="endTime">End Time</label>
-            <input list="endTimes" id="endTime" name="endTime">
-            <datalist id="endTimes">
+            <select id="endTime" name="endTime">
+                <option value=""></option>
                 {{#each timesList}}
-                <option value="{{this}}">
+                <option value="{{this}}">{{this}}</option>
                 {{/each}}
-            </datalist>
+            </select>
             <label for="location">Location</label>
             <select id="location" name="location">
                 <!--DONT CHANGE THE OPTION VALUES HERE!! IT WILL SCREW UP OTHER CODE IN USERS.JS--> 
@@ -30,7 +30,7 @@
             </select>
             <label for="workouts">Workouts</label>
             <select id="workouts" name="workouts" multiple>
-                <option hidden selected value=""></option>
+                <option hidden selected value="None"></option>
                 <option value="Arms">Arms</option>
                 <option value="Legs">Legs</option>
                 <option value="Back">Back</option>
