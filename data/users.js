@@ -123,6 +123,7 @@ const createReservation = async (
   );
 
   updateHotspots(fullDate, location, startTime, endTime);
+  updateCurrentRegistered(fullDate, location, startTime, endTime);
 
   if (updatedInfo.modifiedCount === 0) return { createdReservation: false };
   else return { createdReservation: true };
@@ -179,7 +180,6 @@ const getVisibleUsers = async () => {
     if (user.upcomingReservations.length !== 0)
       usersWithWorkoutsToday.push(user);
   }
-
   return usersWithWorkoutsToday;
 };
 
@@ -331,6 +331,64 @@ const updateHotspots = async (fullDate, location, startTime, endTime) => {
       { day: day },
       { $set: { registeredAverageSCH: registeredAverage } }
     );
+  }
+};
+
+const updateCurrentRegistered = async (fullDate, location, startTime, endTime) => {
+  let d = new Date();
+  let year = d.getFullYear();
+  let date = (d.getDate() < 10 ? "0" : "") + d.getDate();
+  let month = d.getMonth();
+  let currentDate = `${year}/${month + 1}/${date}`;
+  
+  if(fullDate === currentDate){
+    let startDate = new Date(`${fullDate} ${startTime}`);
+    let endDate = new Date(`${fullDate} ${endTime}`);
+    const day = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
+      startDate
+    );
+  
+    // Return the registered average array for the appropriate location
+    const hotspotsCollection = await hotspots();
+    let hotspotsDay = await hotspotsCollection.findOne({ day: day });
+    let registeredAverage =
+      location === "UCC"
+        ? hotspotsDay.currentRegisteredUCC
+        : hotspotsDay.currentRegisteredSCH;
+  
+    //this is to add to the hotspots collection
+    let timeDiff = endDate.getHours() - startDate.getHours();
+    //[8am, 9am, 10am, 11am, 12pm, 1pm, 2pm, 3pm, 4pm, 5pm, 6pm, 7pm, 8pm, 9pm, 10pm, 11pm]
+    //add 1 in the array indexes in which the reservations reside (check the hours in the start time and end time)
+    //populate the array with zeros if there arn't any
+    if (timeDiff < 1) {
+      registeredAverage[startDate.getHours() - 8]++;
+    } else if (timeDiff === 2) {
+      registeredAverage[startDate.getHours() - 8]++;
+      registeredAverage[endDate.getHours() - 9]++;
+    } else {
+      // I don't think this needs to be here because we either update one hour or two hours, which is the maximum
+      registeredAverage[startDate.getHours() - 8]++;
+      registeredAverage[endDate.getHours() - 8]++;
+    }
+    // My suggested correction
+    // if (timeDiff < 2) {
+    //     registeredAverage[startDate.getHours()-8]++;
+    // } else {
+    //     registeredAverage[startDate.getHours()-8]++;
+    //     registeredAverage[endDate.getHours()-9]++;
+    // }
+    if (location === "UCC") {
+      const updatedAverage = await hotspotsCollection.updateOne(
+        { day: day },
+        { $set: { currentRegisteredUCC: registeredAverage } }
+      );
+    } else {
+      const updatedAverage = await hotspotsCollection.updateOne(
+        { day: day },
+        { $set: { currentRegisteredSCH: registeredAverage } }
+      );
+    }
   }
 };
 
