@@ -80,7 +80,7 @@ let validString = (str, varName) => {
   // string should be a valid string (no empty spaces, no spaces in username and only alphanumeric characters)
   if (typeof str !== "string" || str.trim().length === 0)
     throw `${varName} must be a non-empty string`;
-  return str.trim().toLowerCase();
+  return str.trim();
 };
 
 /* Takes a time in miiltary format and converts it to cilivian format "hh:mm [AM/PM]" */
@@ -112,25 +112,65 @@ let convertTimeToMilitary = (time) => {
 };
 
 let validTime = (time, type) => {
-  time = validString(time, type);
-  if (!/^\d{1,2}:\d{2} (am|pm)$/.test(time))
+  time = validString(time);
+  if (!/^\d{1,2}:\d{2} (AM|PM)$/.test(time))
     throw `${type} must be in the format hh:mm (AM|PM)`;
   splitTime = time.split(" ");
   let [hours, minutes] = splitTime[0].split(":").map((elem) => parseInt(elem));
   if (hours < 1 || hours > 12 || minutes < 0 || minutes >= 60)
     throw "Reservation time is invalid";
   return time;
-};
+}
 
-let validReservation = (fullDate, startTime, endTime) => {
+let validReservation = (fullDate, startTime, endTime, location, workouts) => {
+    // Validate the input parameters
+    if (fullDate === undefined) throw "Must provide date for reservation";
+    if (startTime === undefined) throw "Must provide start time for reservation";
+    if (endTime === undefined) throw "Must provide end time for reservatin";
+    if (location === undefined) throw "Must provide location for reservation";
+    if (workouts === undefined) throw "Must provide an option for workouts";
+
+    // Check if string inputs are valid strings
+    fullDate = validString(fullDate, "Reservation date");
+    startTime = validString(startTime, "Start time");
+    endTime = validString(endTime, "End time");
+    location = validString(location, "Location");
+    workouts = Array.isArray(workouts) ? workouts : [workouts];
+    let validWorkouts = {
+        Arms: "Arms",
+        Legs: "Legs",
+        Back: "Back",
+        Chest: "Chest",
+        Shoulders: "Shoulders",
+        Abs: "Abs",
+        Cardio: "Cardio",
+        Calisthenics: "Calisthenics",
+        Yoga: "Yoga",
+        Other: "Other",
+        None: "No workouts listed"
+    }
+    for (let i = 0; i < workouts.length; i++) {
+        workouts[i] = validString(workouts[i], "Workout");
+        if (validWorkouts[workouts[i]] === undefined) throw `\"${workouts[i]}\" is not a valid workout`;
+        workouts[i] = validWorkouts[workouts[i]];
+    }
+
+    // Check if inputs are in the correct format
+    // Reservation date
+    if (!/^\d{4}-\d{2}-\d{2}/.test(fullDate)) throw "Reservation date must be in the format yyyy-mm-dd";
+    // Start time and end time
+    validTime(startTime, "Start time");
+    validTime(endTime, "End time");
+    // Location
+    if (location !== "UCC" && location !== "Schaefer") throw `${location} is not a valid location`;
+
+    // Check if date and time is valid
     let currDate = new Date();
     let currDateAtMidnight = new Date(currDate.toDateString());
     // Need to replace hyphens with forward slash cause JS Date object is weird
     fullDate = fullDate.replace(/-/g, "\/");
     let reservationDate = new Date(fullDate);
-    startTime = validTime(startTime, "Start time");
-    endTime = validTime(endTime, "End time");
-
+    
     // Check if the date is valid
     if (reservationDate < currDateAtMidnight) throw "Reservation date is invalid";
 
@@ -160,6 +200,8 @@ let validReservation = (fullDate, startTime, endTime) => {
     const twoHoursInMilliseconds = 7200000;
     if (endDate - startDate > twoHoursInMilliseconds)
         throw "Cannot reserve more than two hours at a time";
+
+    return [fullDate, startTime, endTime, location, workouts];
 };
 
 let getTimesLists = () => {
