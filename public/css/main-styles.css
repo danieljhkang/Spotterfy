@@ -103,3 +103,20 @@ form #workouts {
     padding: 10px;
     height: 1000px;
 }
+
+p #reservation {
+    font-weight: bold";
+}
+
+p #reservation-info {
+    font-weight: "bold";
+    font-style: "italic";
+}
+
+h3 #visible-users {
+    font-weight: "bold";
+}
+
+h4 #workout-list {
+    font-weight: "bold";
+}

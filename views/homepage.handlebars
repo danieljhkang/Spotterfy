@@ -7,9 +7,16 @@
             <div id="user-reservations">
                 <h3>Upcoming Reservations:</h3>
                 {{#each userReservations}}
-                    <p style="font-weight: bold;">{{startTime}} - {{endTime}} ({{location}})</p>
+                    <p id="reservation">{{startTime}} - {{endTime}} ({{location}})</p>
                     {{#if workouts}}
                         <p>{{workouts}}</p>
+                    {{/if}}
+                    {{#if timeToCheckIn}}
+                        {{#if checked}}
+                            <em>Checked In!</em>
+                        {{else}}
+                            <a class="checkIn" data-id="{{id}}">Check In</a>
+                        {{/if}}
                     {{/if}}
                 {{/each}}
             </div>
@@ -22,10 +29,10 @@
             {{/if}}
             <p>
                 {{#each visibleUsers}}
-                <h3 style="font-weight: bold;"><u>{{firstName}} {{lastName}}</u></h3>
-                <h4 style="font-weight: bold;">Workout(s):</h4>
+                <h3 id="visible-users"><u>{{firstName}} {{lastName}}</u></h3>
+                <h4 id="workout-list">Workout(s):</h4>
                 {{#each upcomingReservations}}
-                    <p style="font-weight: bold; font-style: italic">{{startTime}} - {{endTime}} ({{location}})</p>
+                    <p id="reservation-info">{{startTime}} - {{endTime}} ({{location}})</p>
                     {{#if workouts}}
                     <p>{{workouts}}</p>
                     {{/if}}
