@@ -77,21 +77,26 @@ const createReservation = async (
     { email: userEmail },
     { projection: { _id: 0, upcomingReservations: 1 } }
   );
-  let startDate = new Date(`${fullDate.replace(/-/g, '\/')} ${startTime}`);
-  let endDate = new Date(`${fullDate.replace(/-/g, '\/')} ${endTime}`);
+  let startDate = new Date(`${fullDate.replace(/-/g, "/")} ${startTime}`);
+  let endDate = new Date(`${fullDate.replace(/-/g, "/")} ${endTime}`);
   let totalReservationTime = endDate - startDate;
   const twoHoursInMilliseconds = 7200000;
   let findMatchingReservation = userReservations.upcomingReservations.find(
     (reservation) => {
       // If the new reservation times INTERSECT with any existing reservation times
       if (fullDate === reservation.date) {
-        startDate = new Date(`${reservation.date.replace(/-/g, '\/')} ${reservation.startTime}`);
-        endDate = new Date(`${reservation.date.replace(/-/g, '\/')} ${reservation.endTime}`);
-        totalReservationTime += endDate-startDate;
+        startDate = new Date(
+          `${reservation.date.replace(/-/g, "/")} ${reservation.startTime}`
+        );
+        endDate = new Date(
+          `${reservation.date.replace(/-/g, "/")} ${reservation.endTime}`
+        );
+        totalReservationTime += endDate - startDate;
         return true;
       }
       return false;
-    });
+    }
+  );
 
   if (findMatchingReservation)
     throw "Already have reservation with these times";
@@ -320,48 +325,53 @@ const getVisibility = async (email) => {
 };
 
 const updateHotspots = async (fullDate, location, startTime, endTime) => {
-    let startDate = new Date(`${fullDate} ${startTime}`);
-    let endDate = new Date(`${fullDate} ${endTime}`);
-    const day = new Intl.DateTimeFormat("en-US", { weekday: 'long' }).format(startDate);
+  let startDate = new Date(`${fullDate} ${startTime}`);
+  let endDate = new Date(`${fullDate} ${endTime}`);
+  const day = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
+    startDate
+  );
 
-    // Return the registered average array for the appropriate location
-    const hotspotsCollection = await hotspots();
-    let hotspotsDay = await hotspotsCollection.findOne({ day: day });
-    let registeredAverage = location==="UCC" ? hotspotsDay.registeredAverageUCC : hotspotsDay.registeredAverageSCH;
+  // Return the registered average array for the appropriate location
+  const hotspotsCollection = await hotspots();
+  let hotspotsDay = await hotspotsCollection.findOne({ day: day });
+  let registeredAverage =
+    location === "UCC"
+      ? hotspotsDay.registeredAverageUCC
+      : hotspotsDay.registeredAverageSCH;
 
-    //this is to add to the hotspots collection
-    let timeDiff = endDate.getHours() - startDate.getHours();
-    //[8am, 9am, 10am, 11am, 12pm, 1pm, 2pm, 3pm, 4pm, 5pm, 6pm, 7pm, 8pm, 9pm, 10pm, 11pm]
-    //add 1 in the array indexes in which the reservations reside (check the hours in the start time and end time)
-    //populate the array with zeros if there arn't any
-    if (timeDiff < 1) {
-        registeredAverage[startDate.getHours()-8]++;
-    } else if (timeDiff === 2) {
-        registeredAverage[startDate.getHours()-8]++;
-        registeredAverage[endDate.getHours()-9]++;
-    } else {
-        // I don't think this needs to be here because we either update one hour or two hours, which is the maximum
-        registeredAverage[startDate.getHours()-8]++;
-        registeredAverage[endDate.getHours()-8]++;
-    }
-    // My suggested correction
-    // if (timeDiff < 2) {
-    //     registeredAverage[startDate.getHours()-8]++;
-    // } else {
-    //     registeredAverage[startDate.getHours()-8]++;
-    //     registeredAverage[endDate.getHours()-9]++;
-    // }
-    if (location === "UCC") {
-        const updatedAverage = await hotspotsCollection.updateOne(
-            { day: day },
-            { $set: { registeredAverageUCC: registeredAverage } }
-        );
-    } else {
-        const updatedAverage = await hotspotsCollection.updateOne(
-            { day: day },
-            { $set: { registeredAverageSCH: registeredAverage } }
-        );
-    }
+  //this is to add to the hotspots collection
+  let timeDiff = endDate.getHours() - startDate.getHours();
+  //[8am, 9am, 10am, 11am, 12pm, 1pm, 2pm, 3pm, 4pm, 5pm, 6pm, 7pm, 8pm, 9pm, 10pm, 11pm]
+  //add 1 in the array indexes in which the reservations reside (check the hours in the start time and end time)
+  //populate the array with zeros if there arn't any
+  if (timeDiff < 1) {
+    registeredAverage[startDate.getHours() - 8]++;
+  } else if (timeDiff === 2) {
+    registeredAverage[startDate.getHours() - 8]++;
+    registeredAverage[endDate.getHours() - 9]++;
+  } else {
+    // I don't think this needs to be here because we either update one hour or two hours, which is the maximum
+    registeredAverage[startDate.getHours() - 8]++;
+    registeredAverage[endDate.getHours() - 8]++;
+  }
+  // My suggested correction
+  // if (timeDiff < 2) {
+  //     registeredAverage[startDate.getHours()-8]++;
+  // } else {
+  //     registeredAverage[startDate.getHours()-8]++;
+  //     registeredAverage[endDate.getHours()-9]++;
+  // }
+  if (location === "UCC") {
+    const updatedAverage = await hotspotsCollection.updateOne(
+      { day: day },
+      { $set: { registeredAverageUCC: registeredAverage } }
+    );
+  } else {
+    const updatedAverage = await hotspotsCollection.updateOne(
+      { day: day },
+      { $set: { registeredAverageSCH: registeredAverage } }
+    );
+  }
 };
 
 module.exports = {

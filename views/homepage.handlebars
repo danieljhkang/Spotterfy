@@ -4,6 +4,15 @@
             <h2>Hello, {{user_name}}</h2>
             <p>Today is {{date}}</p>
             <p>Current Mode : {{userVisibility}}</p>
+            <div id="user-reservations">
+                <h3>Upcoming Reservations:</h3>
+                {{#each userReservations}}
+                    <p style="font-weight: bold;">{{startTime}} - {{endTime}} ({{location}})</p>
+                    {{#if workouts}}
+                        <p>{{workouts}}</p>
+                    {{/if}}
+                {{/each}}
+            </div>
         </div>
         <div class="visible-users">
             {{#if usersWorkingOut}}

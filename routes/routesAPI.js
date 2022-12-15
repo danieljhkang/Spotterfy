@@ -210,7 +210,7 @@ router
     let timesList = helpers.getTimesLists();
     let date = new Date();
     let dateOneYear = new Date(date.toDateString());
-    dateOneYear.setFullYear(date.getFullYear()+1);
+    dateOneYear.setFullYear(date.getFullYear() + 1);
     let currentDate = date.toISOString().substring(0, 10);
     let oneYearFromToday = dateOneYear.toISOString().substring(0, 10);
     try {
@@ -260,33 +260,42 @@ router
   });
 
 router.route("/homepage").get(async (req, res) => {
-    //code here for GET
-    //get user first name
-    let email = req.session.user.email;
-    let name = await userData.getFirstName(email);
-    let firstLetter = name.charAt(0).toUpperCase();
-    let remainingLetters = name.slice(1);
-    name = firstLetter + remainingLetters;
+  //code here for GET
+  //get user first name
+  let email = req.session.user.email;
+  let name = await userData.getFirstName(email);
+  let firstLetter = name.charAt(0).toUpperCase();
+  let remainingLetters = name.slice(1);
+  name = firstLetter + remainingLetters;
 
-    // update user's reservations
-    let updateReservations = await userData.updateReservations(email);
+  // update user's reservations
+  let updateReservations = await userData.updateReservations(email);
 
-    //For displaying the user's visibilty statement on the homepage
-    let userVisibility = await userData.getVisibility(email);
-    let visibilityView = userVisibility ? "Public" : "Private";
+  //For displaying the user's visibilty statement on the homepage
+  let userVisibility = await userData.getVisibility(email);
+  let visibilityView = userVisibility ? "Public" : "Private";
 
-    let options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
-    let dateFormat = new Date().toLocaleDateString("en-US", options);
-    let visibleUsers = await userData.getVisibleUsers();
+  let options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  let dateFormat = new Date().toLocaleDateString("en-US", options);
+  let visibleUsers = await userData.getVisibleUsers();
 
-    res.render("homepage", {
-        title: "Spotterfy",
-        user_name: name,
-        date: dateFormat,
-        visibleUsers: visibleUsers,
-        usersWorkingOut: visibleUsers.length,
-        userVisibility: visibilityView,
-    });
+  // display user's upcoming reservations
+  let userReservations = await userData.getUpcoming(email);
+
+  res.render("homepage", {
+    title: "Spotterfy",
+    user_name: name,
+    date: dateFormat,
+    visibleUsers: visibleUsers,
+    usersWorkingOut: visibleUsers.length,
+    userVisibility: visibilityView,
+    userReservations: userReservations,
+  });
 });
 
 router.route("/logout").get(async (req, res) => {
