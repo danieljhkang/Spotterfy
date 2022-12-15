@@ -7,16 +7,16 @@
         </div>
         <div class="visible-users">
             {{#if usersWorkingOut}}
-                <h3>Who's Working Out Today?</h3>
+                <h2>Who's Working Out Today?</h2>
             {{else}}
                 <h3 style="color:red;">NO PUBLIC USERS WORKING OUT</h3>
             {{/if}}
             <p>
                 {{#each visibleUsers}}
-                <h4 style="font-weight: bold;">{{firstName}} {{lastName}}</h4>
+                <h3 style="font-weight: bold;"><u>{{firstName}} {{lastName}}</u></h3>
                 <h4 style="font-weight: bold;">Workout(s):</h4>
                 {{#each upcomingReservations}}
-                    <p style="font-weight: bold; font-style: italic">{{startTime}} - {{endTime}} ({{location}}):</p>
+                    <p style="font-weight: bold; font-style: italic">{{startTime}} - {{endTime}} ({{location}})</p>
                     {{#if workouts}}
                     <p>{{workouts}}</p>
                     {{/if}}
