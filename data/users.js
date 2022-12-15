@@ -64,13 +64,13 @@ const createReservation = async (
   workouts
 ) => {
   [fullDate, startTime, endTime, location, workouts] = helpers.validReservation(
-    fullDate, 
-    startTime, 
-    endTime, 
-    location, 
+    fullDate,
+    startTime,
+    endTime,
+    location,
     workouts
   );
-  
+
   // If a reservation in the same time frame already exists, it is invalid
   const usersCollection = await users();
   const userReservations = await usersCollection.findOne(
@@ -85,22 +85,15 @@ const createReservation = async (
     (reservation) => {
       // If the new reservation times INTERSECT with any existing reservation times
       if (fullDate === reservation.date) {
-<<<<<<< HEAD
-        startDate = new Date(
+        let existingStart = new Date(
           `${reservation.date.replace(/-/g, "/")} ${reservation.startTime}`
         );
-        endDate = new Date(
+        let existingEnd = new Date(
           `${reservation.date.replace(/-/g, "/")} ${reservation.endTime}`
         );
         totalReservationTime += endDate - startDate;
-        return true;
-=======
-        let existingStart = new Date(`${reservation.date.replace(/-/g, '\/')} ${reservation.startTime}`);
-        let existingEnd = new Date(`${reservation.date.replace(/-/g, '\/')} ${reservation.endTime}`);
-        totalReservationTime += endDate-startDate;
         if (existingStart <= startDate && startDate < existingEnd) return true;
         if (existingStart < endDate && endDate <= existingEnd) return true;
->>>>>>> dfa8310 (Moved all input validation to helper function)
       }
       return false;
     }
