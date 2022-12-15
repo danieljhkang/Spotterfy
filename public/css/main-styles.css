@@ -11,17 +11,27 @@ header {
     margin-bottom: 20px;
 }
 
-.nav_links {
+#nav_links {
     list-style: none;
 }
 
-.nav_links li {
+#nav_links li {
     display: inline-block;
-    padding: 0px 20px;
+    padding: 10px 20px;
+    border-radius: 15px;
+    margin: 0px 5px;
 }
 
-.nav_links li a:hover {
-    color: skyblue;
+#nav_links li.active_link,
+#nav_links li.active_link>a {
+    background-color: #486fb8;
+    color: white;
+}
+
+#nav_links li:hover,
+#nav_links li:hover>a {
+    background-color: lightgray;
+    color: black;
 }
 
 .form-container {
