@@ -224,7 +224,7 @@ router
       startTime = startTime.trim();
       endTime = endTime.trim();
       location = location.trim();
-      helpers.validReservation(fullDate, startTime, endTime);
+      helpers.validReservation(fullDate, startTime, endTime, location, workouts);
       var createReservation = await users.createReservation(
         req.session.user.email,
         fullDate,
