@@ -1,7 +1,6 @@
 const mongoCollections = require("./config/mongoCollections");
 const users = mongoCollections.users;
 const { ObjectId, Db } = require("mongodb");
-const { dbConnection } = require("./config/mongoConnection");
 
 /* CHECK USER INFO */
 // check username
@@ -123,57 +122,44 @@ let validTime = (time, type) => {
   return time;
 };
 
-let validReservation = (date, startTime, endTime) => {
-  let currDate = new Date();
-  let [year, month, day] = date.split("-");
-  startTime = validTime(startTime, "Start time");
-  endTime = validTime(endTime, "End time");
+let validReservation = (fullDate, startTime, endTime) => {
+    let currDate = new Date();
+    let currDateAtMidnight = new Date(currDate.toDateString());
+    // Need to replace hyphens with forward slash cause JS Date object is weird
+    fullDate = fullDate.replace(/-/g, "\/");
+    let reservationDate = new Date(fullDate);
+    startTime = validTime(startTime, "Start time");
+    endTime = validTime(endTime, "End time");
 
-  // Check if the date is valid
-  if (year < currDate.getFullYear()) throw "Date is invalid";
-  if (year === currDate.getFullYear() && month < currDate.getMonth() + 1)
-    throw "Date is invalid";
-  if (month === currDate.getMonth() + 1 && day < currDate.getDate())
-    throw "Date is invalid";
+    // Check if the date is valid
+    if (reservationDate < currDateAtMidnight) throw "Reservation date is invalid";
 
-  // Split given times into their separate parts (hours, minutes, AM/PM)
-  let [startHours, startMinutes] = convertTimeToMilitary(startTime).split(":");
-  let [endHours, endMinutes] = convertTimeToMilitary(endTime).split(":");
-  if (startHours < 8) throw "Reservation must start after 8 AM";
-  if (endHours >= 23 && minutes > 0) throw "Reservation must end before 11 PM";
+    // Split given times into their separate parts (hours, minutes, AM/PM)
+    let startDate = new Date(`${fullDate} ${startTime}`);
+    let endDate = new Date(`${fullDate} ${endTime}`);
 
-  // Check if the reservation time is in the past (only need to do so if the reservation date
-  //   is the current date)
-  if (
-    year === currDate.getFullYear() &&
-    month === currDate.getMonth() + 1 &&
-    day === currDate.getDate()
-  ) {
-    if (
-      startHours < currDate.getHours() ||
-      (startHours === currDate.getHours() &&
-        startMinutes < currDate.getMinutes())
-    )
-      throw "Start time is invalid";
-    if (
-      endHours < currDate.getHours() ||
-      (endHours === currDate.getHours() && endMinutes < currDate.getMinutes())
-    )
-      throw "End time is invalid";
-  }
-  // Check if end time is before start time
-  if (
-    endHours < startHours ||
-    (endHours === startHours && endMinutes < startMinutes)
-  )
-    throw "The start time for reservation must come before end time";
-  if (startHours === endHours && startMinutes === endMinutes)
-    throw "You must reserve a minimum of 20 minutes";
-  if (
-    endHours - startHours > 2 ||
-    (endHours === startHours && endMinutes < startMinutes)
-  )
-    throw "Cannot reserve more than two hours at a time";
+    if (startDate.getHours() < 8) 
+        throw "Reservation must start after 8 AM";
+    if (endDate.getHours() >= 23 && endDate.getMinutes() > 0) 
+        throw "Reservation must end before 11 PM";
+
+    // If reservation date is current date, check if reservation time is in the past
+    //    We have to convert to date string because === doesn't work with Date object
+    if (+reservationDate === +currDateAtMidnight) {
+    // if (currDate.toDateString() === reservationDate.toDateString()) {
+        if (startDate < currDate)
+            throw "Start time is invalid";
+        if (endDate < currDate)
+            throw "End time is invalid";
+    }
+    // Check if end time is before start time
+    if (endDate < startDate)
+        throw "The start time for reservation must come before end time";
+    if (startDate.getTime() === endDate.getTime())
+        throw "You must reserve a minimum of 20 minutes";
+    const twoHoursInMilliseconds = 7200000;
+    if (endDate - startDate > twoHoursInMilliseconds)
+        throw "Cannot reserve more than two hours at a time";
 };
 
 let getTimesLists = () => {
@@ -182,7 +168,7 @@ let getTimesLists = () => {
   let hours = 8;
   let minutes = 0;
   let timesList = [];
-  while (timesList.length < Math.trunc(minutesInDay / minuteIncrement)) {
+  while (hours < 23 || minutes === 0) {
     let time = "";
     time += hours % 12 === 0 ? "12" : hours % 12; // Convert hours from military
     time += ":";
