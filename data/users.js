@@ -85,11 +85,6 @@ const createReservation = async (
     (reservation) => {
       // If the new reservation times INTERSECT with any existing reservation times
       if (fullDate === reservation.date) {
-<<<<<<< HEAD
-        let existingStart = new Date(`${reservation.date.replace(/-/g, '\/')} ${reservation.startTime}`);
-        let existingEnd = new Date(`${reservation.date.replace(/-/g, '\/')} ${reservation.endTime}`);
-        totalReservationTime += endDate-startDate;
-=======
         let existingStart = new Date(
           `${reservation.date.replace(/-/g, "/")} ${reservation.startTime}`
         );
@@ -97,7 +92,6 @@ const createReservation = async (
           `${reservation.date.replace(/-/g, "/")} ${reservation.endTime}`
         );
         totalReservationTime += endDate - startDate;
->>>>>>> 64a45e06c65b6161c14e969a216add9cd1214730
         if (existingStart <= startDate && startDate < existingEnd) return true;
         if (existingStart < endDate && endDate <= existingEnd) return true;
       }
