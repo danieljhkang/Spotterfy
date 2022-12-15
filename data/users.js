@@ -63,14 +63,14 @@ const createReservation = async (
   location,
   workouts
 ) => {
-  // Validate the input parameters
-  if (fullDate === undefined) throw "Must provide date for reservation";
-  if (startTime === undefined) throw "Must provide start time for reservation";
-  if (endTime === undefined) throw "Must provide end time for reservatin";
-  if (location === undefined) throw "Must provide location for reservation";
-  if (workouts === undefined) throw "Must provide an option for workouts";
-  if (!Array.isArray(workouts)) workouts = [workouts];
-  helpers.validReservation(fullDate, startTime, endTime);
+  [fullDate, startTime, endTime, location, workouts] = helpers.validReservation(
+    fullDate, 
+    startTime, 
+    endTime, 
+    location, 
+    workouts
+  );
+  
   // If a reservation in the same time frame already exists, it is invalid
   const usersCollection = await users();
   const userReservations = await usersCollection.findOne(
@@ -85,6 +85,7 @@ const createReservation = async (
     (reservation) => {
       // If the new reservation times INTERSECT with any existing reservation times
       if (fullDate === reservation.date) {
+<<<<<<< HEAD
         startDate = new Date(
           `${reservation.date.replace(/-/g, "/")} ${reservation.startTime}`
         );
@@ -93,6 +94,13 @@ const createReservation = async (
         );
         totalReservationTime += endDate - startDate;
         return true;
+=======
+        let existingStart = new Date(`${reservation.date.replace(/-/g, '\/')} ${reservation.startTime}`);
+        let existingEnd = new Date(`${reservation.date.replace(/-/g, '\/')} ${reservation.endTime}`);
+        totalReservationTime += endDate-startDate;
+        if (existingStart <= startDate && startDate < existingEnd) return true;
+        if (existingStart < endDate && endDate <= existingEnd) return true;
+>>>>>>> dfa8310 (Moved all input validation to helper function)
       }
       return false;
     }
