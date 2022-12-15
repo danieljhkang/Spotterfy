@@ -6,6 +6,7 @@ const router = express.Router();
 const helpers = require("../helpers");
 const users = require("../data/users");
 const xss = require("xss");
+const { Long } = require("mongodb");
 
 router.route("/").get(async (req, res) => {
   //code here for GET
@@ -201,33 +202,32 @@ router
     });
   })
   .post(async (req, res) => {
-    let date = xss(req.body.date);
+    let fullDate = xss(req.body.date);
     let startTime = xss(req.body.startTime);
     let endTime = xss(req.body.endTime);
     let location = xss(req.body.location);
     let workouts = xss(req.body.workouts);
     let timesList = helpers.getTimesLists();
-    let d = new Date();
-    let year = d.getFullYear();
-    let fullDate = (d.getDate() < 10 ? "0" : "") + d.getDate();
-    let month = d.getMonth();
-    let currentDate = `${year}-${month + 1}-${fullDate}`;
-    let oneYearFromToday = `${year + 1}-${month + 1}-${fullDate}`;
+    let date = new Date();
+    let dateOneYear = new Date(date.toDateString());
+    dateOneYear.setFullYear(date.getFullYear()+1);
+    let currentDate = date.toISOString().substring(0, 10);
+    let oneYearFromToday = dateOneYear.toISOString().substring(0, 10);
     try {
-      if (date === undefined) throw "Must provide date for reservation";
+      if (fullDate === undefined) throw "Must provide date for reservation";
       if (startTime === undefined)
         throw "Must provide start time for reservation";
       if (endTime === undefined) throw "Must provide end time for reservatin";
       if (location === undefined) throw "Must provide location for reservation";
       if (workouts === undefined) throw "Must provide an option for workouts";
-      date = date.trim();
+      fullDate = fullDate.trim();
       startTime = startTime.trim();
       endTime = endTime.trim();
       location = location.trim();
-      helpers.validReservation(date, startTime, endTime);
+      helpers.validReservation(fullDate, startTime, endTime);
       var createReservation = await users.createReservation(
         req.session.user.email,
-        date,
+        fullDate,
         startTime,
         endTime,
         location,
@@ -260,41 +260,33 @@ router
   });
 
 router.route("/homepage").get(async (req, res) => {
-  //code here for GET
-  //get user first name
-  let email = req.session.user.email;
-  let name = await userData.getFirstName(email);
-  let firstLetter = name.charAt(0).toUpperCase();
-  let remainingLetters = name.slice(1);
-  name = firstLetter + remainingLetters;
+    //code here for GET
+    //get user first name
+    let email = req.session.user.email;
+    let name = await userData.getFirstName(email);
+    let firstLetter = name.charAt(0).toUpperCase();
+    let remainingLetters = name.slice(1);
+    name = firstLetter + remainingLetters;
 
-  // update user's reservations
-  let updateReservations = await userData.updateReservations(email);
+    // update user's reservations
+    let updateReservations = await userData.updateReservations(email);
 
-  //For displaying the user's visibilty statement on the homepage
-  let userVisibility = await userData.getVisibility(email);
-  let visibilityView;
-  if (userVisibility) {
-    visibilityView = "Public";
-  } else {
-    visibilityView = "Private";
-  }
+    //For displaying the user's visibilty statement on the homepage
+    let userVisibility = await userData.getVisibility(email);
+    let visibilityView = userVisibility ? "Public" : "Private";
 
-  let date = new Date().toUTCString().slice(0, 16);
-  let visibleUsers = await userData.getVisibleUsers();
+    let options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
+    let dateFormat = new Date().toLocaleDateString("en-US", options);
+    let visibleUsers = await userData.getVisibleUsers();
 
-  try {
     res.render("homepage", {
-      title: "Spotterfy",
-      user_name: name,
-      date: date,
-      visibleUsers: visibleUsers,
-      usersWorkingOut: visibleUsers.length,
-      userVisibility: visibilityView,
+        title: "Spotterfy",
+        user_name: name,
+        date: dateFormat,
+        visibleUsers: visibleUsers,
+        usersWorkingOut: visibleUsers.length,
+        userVisibility: visibilityView,
     });
-  } catch (e) {
-    return res.status(400).json({ error: e });
-  }
 });
 
 router.route("/logout").get(async (req, res) => {
