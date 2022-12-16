@@ -6,8 +6,8 @@
             <p>Current Mode : {{userVisibility}}</p>
             <div id="user-reservations">
                 <h3>Upcoming Reservations:</h3>
-                {{#if currentReservations}}
-                    {{#each currentReservations}}
+                {{#if userReservations}}
+                    {{#each userReservations}}
                         <p id="reservation">{{date}}: {{startTime}} - {{endTime}} ({{location}})</p>
                         {{#if workouts}}
                             <p>{{workouts}}</p>

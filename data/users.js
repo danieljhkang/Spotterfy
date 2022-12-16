@@ -226,39 +226,7 @@ const getUserByEmail = async (email) => {
 const getUpcoming = async (email) => {
   helpers.validEmail(email);
   let user = await getUserByEmail(email);
-  return user.upcomingReservations;
-};
-
-// sort upcoming reservations by time
-const getCurrentReservations = async (email) => {
-  // // get current date
-  // let d = new Date();
-  // let year = d.getFullYear();
-  // let fullDate = (d.getDate() < 10 ? "0" : "") + d.getDate();
-  // let month = d.getMonth();
-  // let currentDate = `${year}/${month + 1}/${fullDate}`;
-  // console.log(currentDate);
-  // // const today = new Date(currentDate);
-  // // console.log(today);
-
-  // // get reservations for current date
-  // const upcoming = await getUpcoming(email);
-  // const current = [];
-  // upcoming.forEach((res) => {
-  //   // let resDate = new Date(res.date);
-  //   // if before current date, remove from upcoming and add previous
-  //   if (res.date === currentDate) {
-  //     current.push(res);
-  //   }
-  // });
-
-  // const sorted = current.sort(function (a, b) {
-  //   // sort by date
-  //   return b.startTime.localeCompare(a.startTime);
-  // });
-
-  // get upcoming
-  const upcoming = await getUpcoming(email);
+  let upcoming = user.upcomingReservations;
 
   // sort by time
   const sort = upcoming.sort(function (a, b) {
@@ -455,5 +423,4 @@ module.exports = {
   getVisibleUsers,
   getVisibility,
   updateReservations,
-  getCurrentReservations,
 };

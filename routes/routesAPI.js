@@ -276,7 +276,7 @@ router.route("/homepage").get(async (req, res) => {
 
   // update user's reservations
   let updateReservations = await userData.updateReservations(email);
-  let currentReservations = await userData.getCurrentReservations(email);
+  let userReservations = await userData.getUpcoming(email);
 
   //For displaying the user's visibilty statement on the homepage
   let userVisibility = await userData.getVisibility(email);
@@ -298,7 +298,7 @@ router.route("/homepage").get(async (req, res) => {
     visibleUsers: visibleUsers,
     usersWorkingOut: visibleUsers.length,
     userVisibility: visibilityView,
-    currentReservations: currentReservations,
+    userReservations: userReservations,
   });
 });
 
