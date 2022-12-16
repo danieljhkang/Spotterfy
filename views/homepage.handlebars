@@ -51,13 +51,23 @@
             </p>
         </div>
     </div>
-    <div class="reservationGraph" id="todaysReservationsGraph"></div>
+    <div class="reservationGraph" id="todaysReservationsGraphUCC"></div>
+    <div class="reservationGraph" id="todaysReservationsGraphSCH"></div>
     <script>
-        Plotly.newPlot("todaysReservationsGraph", /* JSON object */ {
+        Plotly.newPlot("todaysReservationsGraphUCC", /* JSON object */ {
           "data" : [{
             'x': ["8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", 
             "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"],
-            'y': [{{todaysReservationsArray}}],
+            'y': [{{todaysReservationsArrayUCC}}],
+            'type': 'bar'}],
+        })
+    </script>
+    <script>
+        Plotly.newPlot("todaysReservationsGraphSCH", /* JSON object */ {
+          "data" : [{
+            'x': ["8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", 
+            "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"],
+            'y': [{{todaysReservationsArraySCH}}],
             'type': 'bar'}],
         })
     </script>
