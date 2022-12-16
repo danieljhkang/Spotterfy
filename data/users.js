@@ -258,7 +258,7 @@ const updateReservations = async (email) => {
   let year = d.getFullYear();
   let fullDate = (d.getDate() < 10 ? "0" : "") + d.getDate();
   let month = d.getMonth();
-  let currentDate = `${year}-${month + 1}-${fullDate}`;
+  let currentDate = `${year}/${month + 1}/${fullDate}`;
   const today = new Date(currentDate);
 
   // initialize upcoming and previous reservations
@@ -292,6 +292,46 @@ const updateReservations = async (email) => {
 
   if (updatedInfo.modifiedCount === 0) return { updateReservations: false };
   else return { updateReservations: true };
+};
+
+const timeToCheckIn = async (email) => {
+  let itTime = false;
+  const upcoming = await getUpcoming(email);
+  if (upcoming.length === 0) return itTime;
+  const nextRes = upcoming[0];
+  let resTime = helpers.convertTimeToMilitary(nextRes.startTime);
+  let splitTime = resTime.split(":");
+  const startHour = parseInt(splitTime[0]);
+  const startMin = parseInt(splitTime[1]);
+  resTime = helpers.convertTimeToMilitary(nextRes.endTime);
+  splitTime = resTime.split(":");
+  const endHour = parseInt(splitTime[0]);
+
+  // get current date
+  let d = new Date();
+  let year = d.getFullYear();
+  let fullDate = (d.getDate() < 10 ? "0" : "") + d.getDate();
+  let month = d.getMonth();
+  let currentDate = `${year}/${month + 1}/${fullDate}`;
+
+  let hourNow = d.getHours();
+  let minNow = d.getMinutes();
+
+  let timeDiff = startMin - minNow;
+
+  let timeNow = hourNow + ":" + minNow;
+
+  if (
+    nextRes.date === currentDate &&
+    (startHour <= hourNow || endHour >= hourNow) &&
+    timeDiff <= 10 &&
+    nextRes.endTime >= timeNow
+  ) {
+    itTime = true;
+    return itTime;
+  }
+
+  return itTime;
 };
 
 const getVisibility = async (email) => {
@@ -416,77 +456,77 @@ const updateCurrentRegistered = async (
 //returns an array of total registered number of students per hour
 const getHotspots = async (day, location) => {
   const hotspotsCollection = await hotspots();
-  if(location === "UCC"){
+  if (location === "UCC") {
     const dayObject = await hotspotsCollection.findOne({ day: day });
     return dayObject.registeredAverageUCC;
-  }else{
-    const dayObject = await hotspotsCollection.findOne({day: day});
+  } else {
+    const dayObject = await hotspotsCollection.findOne({ day: day });
     return dayObject.registeredAverageSCH;
   }
-}
+};
 
-const getBestArray = async (array) =>{
+const getBestArray = async (array) => {
   let tempArray = array;
   let bestArray = [];
   let addedIndex;
-  while(bestArray.length < 2){
+  while (bestArray.length < 2) {
     var index = 0;
-    if(tempArray[0] == value){
+    if (tempArray[0] == value) {
       var value = tempArray[1];
       index = 1;
-    }else{
+    } else {
       var value = tempArray[0];
     }
     for (var i = 1; i < tempArray.length; i++) {
-      if(i != addedIndex){
+      if (i != addedIndex) {
         if (tempArray[i] < value) {
           value = tempArray[i];
           index = i;
         }
       }
     }
-    if(index == 4){
+    if (index == 4) {
       bestArray.push("12PM");
       addedIndex = index;
-    }else if(index > 3){
-      bestArray.push((index+8-12) + "PM");
+    } else if (index > 3) {
+      bestArray.push(index + 8 - 12 + "PM");
       addedIndex = index;
-    }else{
-      bestArray.push((index+8) + "AM");
+    } else {
+      bestArray.push(index + 8 + "AM");
       addedIndex = index;
     }
   }
   return bestArray;
-}
+};
 
-const getWorstArray = async (array) =>{
+const getWorstArray = async (array) => {
   let tempArray = array;
   let worstArray = [];
   let addedIndex;
-  while(worstArray.length < 2){
+  while (worstArray.length < 2) {
     var index = 0;
-    if(tempArray[0] == value){
+    if (tempArray[0] == value) {
       var value = tempArray[1];
       index = 1;
-    }else{
+    } else {
       var value = tempArray[0];
     }
-    for (var i = 1; i< tempArray.length; i++){
-      if(i != addedIndex){
-        if(tempArray[i] > value){
+    for (var i = 1; i < tempArray.length; i++) {
+      if (i != addedIndex) {
+        if (tempArray[i] > value) {
           value = tempArray[i];
           index = i;
         }
       }
     }
-    if(index == 4){
+    if (index == 4) {
       worstArray.push("12PM");
       addedIndex = index;
-    }else if (index > 4){
-      worstArray.push((index+8-12) + "PM");
+    } else if (index > 4) {
+      worstArray.push(index + 8 - 12 + "PM");
       addedIndex = index;
-    }else{
-      worstArray.push((index+8) + "AM");
+    } else {
+      worstArray.push(index + 8 + "AM");
       addedIndex = index;
     }
   }
@@ -501,11 +541,8 @@ const getCurrentRegisteredArray = async (day, location) => {
     location === "UCC"
       ? hotspotsDay.registeredAverageUCC
       : hotspotsDay.registeredAverageSCH;
-  return currentRegistered
-
+  return currentRegistered;
 };
-
-
 
 module.exports = {
   createUser,
@@ -521,5 +558,6 @@ module.exports = {
   getHotspots,
   getBestArray,
   getWorstArray,
-  getCurrentRegisteredArray
+  getCurrentRegisteredArray,
+  timeToCheckIn,
 };

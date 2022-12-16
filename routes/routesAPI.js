@@ -311,9 +311,17 @@ router.route("/homepage").get(async (req, res) => {
   let bestSCH = bestArraySCH[0] + " and " + bestArraySCH[1];
   let worstSCH = worstArraySCH[0] + " and " + worstArraySCH[1];
 
-  let day = dateFormat.substring(0, dateFormat.indexOf(","))
-  let currentRegisteredArrayUCC = await userData.getCurrentRegisteredArray(day, "UCC")
-  let currentRegisteredArraySCH = await userData.getCurrentRegisteredArray(day, "SCH")
+  let day = dateFormat.substring(0, dateFormat.indexOf(","));
+  let currentRegisteredArrayUCC = await userData.getCurrentRegisteredArray(
+    day,
+    "UCC"
+  );
+  let currentRegisteredArraySCH = await userData.getCurrentRegisteredArray(
+    day,
+    "SCH"
+  );
+
+  let timeToCheckIn = await userData.timeToCheckIn(email);
 
   res.render("homepage", {
     title: "Spotterfy",
@@ -328,7 +336,8 @@ router.route("/homepage").get(async (req, res) => {
     bestTimesSCH: bestSCH,
     worstTimesSCH: worstSCH,
     todaysReservationsArrayUCC: currentRegisteredArrayUCC,
-    todaysReservationsArraySCH: currentRegisteredArraySCH
+    todaysReservationsArraySCH: currentRegisteredArraySCH,
+    timeToCheckIn: timeToCheckIn,
   });
 });
 
