@@ -120,3 +120,7 @@ h3 #visible-users {
 h4 #workout-list {
     font-weight: "bold";
 }
+
+h3 #graph-title {
+    text-align: center;
+}
