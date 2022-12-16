@@ -529,7 +529,6 @@ const getWorstArray = async (array) => {
       addedIndex = index;
     }
   }
-  console.log("WORST " + worstArray);
   return worstArray;
 };
 
