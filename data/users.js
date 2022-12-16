@@ -539,9 +539,10 @@ const getCurrentRegisteredArray = async (day, location) => {
   let hotspotsDay = await hotspotsCollection.findOne({ day: day });
   let currentRegistered =
     location === "UCC"
-      ? hotspotsDay.registeredAverageUCC
-      : hotspotsDay.registeredAverageSCH;
-  return currentRegistered;
+      ? hotspotsDay.currentRegisteredUCC
+      : hotspotsDay.currentRegisteredSCH;
+  return currentRegistered
+
 };
 
 module.exports = {
