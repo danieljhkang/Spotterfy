@@ -312,7 +312,7 @@ router.route("/homepage").get(async (req, res) => {
   let worstSCH = worstArraySCH[0] + " and " + worstArraySCH[1];
 
   let day = dateFormat.substring(0, dateFormat.indexOf(","))
-  let currentRegisteredArray = userData.getCurrentRegisteredArray(day, "UCC")
+  let currentRegisteredArray = await userData.getCurrentRegisteredArray(day, "UCC")
 
   res.render("homepage", {
     title: "Spotterfy",

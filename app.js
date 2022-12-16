@@ -136,7 +136,7 @@ const main = async () => {
     });
   }
   // try{
-  //   var c = await usersData.getVisibleUsers();
+  //   var c = await usersData.getCurrentRegisteredArray("Thursday", "UCC");
   //   console.log(c)
   // }catch(e)
   // {
