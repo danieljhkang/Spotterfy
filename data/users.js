@@ -169,7 +169,7 @@ const getVisibleUsers = async () => {
 
   for (let i = 0; i < visibleList.length; i++) {
     for (let j = 0; j < visibleList[i].upcomingReservations.length; j++) {
-      if (visibleList[i].upcomingReservations[j].date === currentDate) 
+      if (visibleList[i].upcomingReservations[j].date === currentDate)
         todaysWorkouts.push(visibleList[i].upcomingReservations[j]);
     }
     visibleList[i].upcomingReservations = todaysWorkouts;
@@ -180,6 +180,7 @@ const getVisibleUsers = async () => {
     if (user.upcomingReservations.length !== 0)
       usersWithWorkoutsToday.push(user);
   }
+
   return usersWithWorkoutsToday;
 };
 
@@ -226,6 +227,52 @@ const getUpcoming = async (email) => {
   helpers.validEmail(email);
   let user = await getUserByEmail(email);
   return user.upcomingReservations;
+};
+
+// sort upcoming reservations by time
+const getCurrentReservations = async (email) => {
+  // // get current date
+  // let d = new Date();
+  // let year = d.getFullYear();
+  // let fullDate = (d.getDate() < 10 ? "0" : "") + d.getDate();
+  // let month = d.getMonth();
+  // let currentDate = `${year}/${month + 1}/${fullDate}`;
+  // console.log(currentDate);
+  // // const today = new Date(currentDate);
+  // // console.log(today);
+
+  // // get reservations for current date
+  // const upcoming = await getUpcoming(email);
+  // const current = [];
+  // upcoming.forEach((res) => {
+  //   // let resDate = new Date(res.date);
+  //   // if before current date, remove from upcoming and add previous
+  //   if (res.date === currentDate) {
+  //     current.push(res);
+  //   }
+  // });
+
+  // const sorted = current.sort(function (a, b) {
+  //   // sort by date
+  //   return b.startTime.localeCompare(a.startTime);
+  // });
+
+  // get upcoming
+  const upcoming = await getUpcoming(email);
+
+  // sort by time
+  const sort = upcoming.sort(function (a, b) {
+    // sort by date
+    return b.startTime.localeCompare(a.startTime);
+  });
+
+  // sort by date
+  const sorted = sort.sort(function (a, b) {
+    // sort by date
+    return a.date.localeCompare(b.date);
+  });
+
+  return sorted;
 };
 
 // update previous reservations by moving past upcoming reservations to previous
@@ -334,20 +381,25 @@ const updateHotspots = async (fullDate, location, startTime, endTime) => {
   }
 };
 
-const updateCurrentRegistered = async (fullDate, location, startTime, endTime) => {
+const updateCurrentRegistered = async (
+  fullDate,
+  location,
+  startTime,
+  endTime
+) => {
   let d = new Date();
   let year = d.getFullYear();
   let date = (d.getDate() < 10 ? "0" : "") + d.getDate();
   let month = d.getMonth();
   let currentDate = `${year}/${month + 1}/${date}`;
-  
-  if(fullDate === currentDate){
+
+  if (fullDate === currentDate) {
     let startDate = new Date(`${fullDate} ${startTime}`);
     let endDate = new Date(`${fullDate} ${endTime}`);
     const day = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
       startDate
     );
-  
+
     // Return the registered average array for the appropriate location
     const hotspotsCollection = await hotspots();
     let hotspotsDay = await hotspotsCollection.findOne({ day: day });
@@ -355,7 +407,7 @@ const updateCurrentRegistered = async (fullDate, location, startTime, endTime) =
       location === "UCC"
         ? hotspotsDay.currentRegisteredUCC
         : hotspotsDay.currentRegisteredSCH;
-  
+
     //this is to add to the hotspots collection
     let timeDiff = endDate.getHours() - startDate.getHours();
     //[8am, 9am, 10am, 11am, 12pm, 1pm, 2pm, 3pm, 4pm, 5pm, 6pm, 7pm, 8pm, 9pm, 10pm, 11pm]
@@ -403,4 +455,5 @@ module.exports = {
   getVisibleUsers,
   getVisibility,
   updateReservations,
+  getCurrentReservations,
 };

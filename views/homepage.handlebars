@@ -6,19 +6,23 @@
             <p>Current Mode : {{userVisibility}}</p>
             <div id="user-reservations">
                 <h3>Upcoming Reservations:</h3>
-                {{#each userReservations}}
-                    <p id="reservation">{{startTime}} - {{endTime}} ({{location}})</p>
-                    {{#if workouts}}
-                        <p>{{workouts}}</p>
-                    {{/if}}
-                    {{#if timeToCheckIn}}
-                        {{#if checked}}
-                            <em>Checked In!</em>
-                        {{else}}
-                            <a class="checkIn" data-id="{{id}}">Check In</a>
+                {{#if currentReservations}}
+                    {{#each currentReservations}}
+                        <p id="reservation">{{date}}: {{startTime}} - {{endTime}} ({{location}})</p>
+                        {{#if workouts}}
+                            <p>{{workouts}}</p>
                         {{/if}}
-                    {{/if}}
-                {{/each}}
+                        {{#if timeToCheckIn}}
+                            {{#if checked}}
+                                <em>Checked In!</em>
+                            {{else}}
+                                <a class="checkIn" data-id="{{id}}">Check In</a>
+                            {{/if}}
+                        {{/if}}
+                    {{/each}}
+                    {{else}}
+                        <p>No reservations for today</p>
+                {{/if}}
             </div>
         </div>
         <div class="visible-users">

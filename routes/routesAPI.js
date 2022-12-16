@@ -224,7 +224,13 @@ router
       startTime = startTime.trim();
       endTime = endTime.trim();
       location = location.trim();
-      helpers.validReservation(fullDate, startTime, endTime, location, workouts);
+      helpers.validReservation(
+        fullDate,
+        startTime,
+        endTime,
+        location,
+        workouts
+      );
       var createReservation = await users.createReservation(
         req.session.user.email,
         fullDate,
@@ -270,6 +276,7 @@ router.route("/homepage").get(async (req, res) => {
 
   // update user's reservations
   let updateReservations = await userData.updateReservations(email);
+  let currentReservations = await userData.getCurrentReservations(email);
 
   //For displaying the user's visibilty statement on the homepage
   let userVisibility = await userData.getVisibility(email);
@@ -284,9 +291,6 @@ router.route("/homepage").get(async (req, res) => {
   let dateFormat = new Date().toLocaleDateString("en-US", options);
   let visibleUsers = await userData.getVisibleUsers();
 
-  // display user's upcoming reservations
-  let userReservations = await userData.getUpcoming(email);
-
   res.render("homepage", {
     title: "Spotterfy",
     user_name: name,
@@ -294,7 +298,7 @@ router.route("/homepage").get(async (req, res) => {
     visibleUsers: visibleUsers,
     usersWorkingOut: visibleUsers.length,
     userVisibility: visibilityView,
-    userReservations: userReservations,
+    currentReservations: currentReservations,
   });
 });
 
