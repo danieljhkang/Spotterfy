@@ -492,7 +492,20 @@ const getWorstArray = async (array) =>{
   }
   console.log("WORST " + worstArray);
   return worstArray;
-}
+};
+
+const getCurrentRegisteredArray = async (day, location) => {
+  const hotspotsCollection = await hotspots();
+  let hotspotsDay = await hotspotsCollection.findOne({ day: day });
+  let currentRegistered =
+    location === "UCC"
+      ? hotspotsDay.registeredAverageUCC
+      : hotspotsDay.registeredAverageSCH;
+  return currentRegistered
+
+};
+
+
 
 module.exports = {
   createUser,
@@ -508,4 +521,5 @@ module.exports = {
   getHotspots,
   getBestArray,
   getWorstArray,
+  getCurrentRegisteredArray
 };
