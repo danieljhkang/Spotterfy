@@ -325,10 +325,9 @@ const timeToCheckIn = async (email) => {
     nextRes.date === currentDate &&
     (startHour <= hourNow || endHour >= hourNow) &&
     timeDiff <= 10 &&
-    nextRes.endTime >= timeNow
+    resTime >= timeNow
   ) {
     itTime = true;
-    return itTime;
   }
 
   return itTime;
@@ -541,8 +540,7 @@ const getCurrentRegisteredArray = async (day, location) => {
     location === "UCC"
       ? hotspotsDay.currentRegisteredUCC
       : hotspotsDay.currentRegisteredSCH;
-  return currentRegistered
-
+  return currentRegistered;
 };
 
 module.exports = {

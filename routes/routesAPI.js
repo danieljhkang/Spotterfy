@@ -341,6 +341,12 @@ router.route("/homepage").get(async (req, res) => {
   });
 });
 
+// unfinished ajax post request
+router.route("/homepage/checked/:id").post(async (req, res) => {
+  const updatedData = userData.checkedIn(req.session.user.email, req.params.id);
+  res.render("upcoming", { layout: null, ...updatedData });
+});
+
 router.route("/logout").get(async (req, res) => {
   //code here for GET
   req.session.destroy();
