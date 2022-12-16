@@ -195,12 +195,12 @@ const checkUserAuth = async (email, password) => {
   const userCollection = await users();
   email = email.trim().toLowerCase();
   let exist = await userCollection.findOne({ email: email });
-  if (!exist) throw "The user doesn't exist";
+  if (!exist) throw "The email or the password is incorrect";
 
   // authenticate user
   let compare = false;
   compare = await bcrypt.compare(password, exist.hashPassword);
-  if (!compare) throw "The password is incorrect";
+  if (!compare) throw "The email or the password is incorrect";
 
   return { authenticatedUser: true };
 };
