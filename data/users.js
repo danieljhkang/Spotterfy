@@ -232,7 +232,7 @@ const getUpcoming = async (email) => {
   // sort by time
   const sort = upcoming.sort(function (a, b) {
     // sort by date
-    return b.startTime.localeCompare(a.startTime);
+    return a.startTime.localeCompare(b.startTime);
   });
 
   // sort by date
@@ -259,18 +259,34 @@ const updateReservations = async (email) => {
   let fullDate = (d.getDate() < 10 ? "0" : "") + d.getDate();
   let month = d.getMonth();
   let currentDate = `${year}/${month + 1}/${fullDate}`;
-  const today = new Date(currentDate);
+  const today = new Date(currentDate).getTime();
 
   // initialize upcoming and previous reservations
   const updateUpcoming = user.upcomingReservations;
   const updatePrevious = user.previousReservations;
 
   upcoming.forEach((res) => {
-    let resDate = new Date(res.date);
+    let resDate = new Date(res.date).getTime();
     // if before current date, remove from upcoming and add previous
     if (resDate < today) {
       updatePrevious.push(res);
       let index = updateUpcoming.indexOf(res);
+      updateUpcoming.splice(index, 1);
+    }
+
+    // if current date but before current time, remove from upcoming and add previous
+    let d = new Date();
+    let hourNow = d.getHours();
+    let minNow = d.getMinutes();
+
+    let endTime = helpers.convertTimeToMilitary(res.endTime);
+    let splitTime = endTime.split(":");
+    let endHour = parseInt(splitTime[0]);
+    let endMin = parseInt(splitTime[1]);
+
+    if (resDate == today && endHour <= hourNow && endMin < minNow) {
+      updatePrevious.push(res);
+      index = updateUpcoming.indexOf(res);
       updateUpcoming.splice(index, 1);
     }
   });
@@ -331,6 +347,51 @@ const timeToCheckIn = async (email) => {
   }
 
   return itTime;
+};
+
+// get reservation by id
+const getReservationById = async (id) => {
+  const userCollection = await users();
+  const user = await userCollection.findOne({
+    upcomingReservations: { $elemMatch: { _id: ObjectId(id) } },
+  });
+
+  if (!user) throw "No user with reservation";
+
+  let upcoming = user.upcomingReservations;
+  let res;
+
+  for (let i = 0; i < upcoming.length; i++) {
+    if (upcoming[i]._id.toString() === id) {
+      res = upcoming[i];
+    }
+  }
+
+  if (!res) throw "Cannot find reservation for user";
+
+  return res;
+};
+
+// mark reservation as checked in
+const checkedIn = async (email, id) => {
+  const res = await getReservationById(id);
+  const userCollection = await users();
+
+  if (res.checked) throw "Reservation already checked in";
+
+  const updatedInfo = await userCollection.updateOne(
+    {
+      email: email,
+      upcomingReservations: { $elemMatch: { _id: ObjectId(id) } },
+    },
+    { $set: { "upcomingReservations.$.checked": true } }
+  );
+
+  if (updatedInfo.modifiedCount === 0) {
+    throw "could not update visibility successfully";
+  }
+
+  return true;
 };
 
 const getVisibility = async (email) => {
@@ -558,4 +619,5 @@ module.exports = {
   getWorstArray,
   getCurrentRegisteredArray,
   timeToCheckIn,
+  checkedIn,
 };
