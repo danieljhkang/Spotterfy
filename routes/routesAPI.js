@@ -276,7 +276,6 @@ router.route("/homepage").get(async (req, res) => {
 
   // update user's reservations
   let updateReservations = await userData.updateReservations(email);
-  let userReservations = await userData.getUpcoming(email);
 
   //For displaying the user's visibilty statement on the homepage
   let userVisibility = await userData.getVisibility(email);
@@ -291,6 +290,27 @@ router.route("/homepage").get(async (req, res) => {
   let dateFormat = new Date().toLocaleDateString("en-US", options);
   let visibleUsers = await userData.getVisibleUsers();
 
+  // display user's upcoming reservations
+  let userReservations = await userData.getUpcoming(email);
+
+  // pull data from mongo for the best and worst times to reserve
+  let dateArray = dateFormat.split(",");
+  let totalArrayUCC = await userData.getHotspots(dateArray[0], "UCC");
+  let totalArraySCH = await userData.getHotspots(dateArray[0], "Schaefer");
+
+  console.log("total Array : " + totalArrayUCC);
+
+  let bestArrayUCC = await userData.getBestArray(totalArrayUCC);
+  let worstArrayUCC = await userData.getWorstArray(totalArrayUCC);
+  let bestArraySCH = await userData.getBestArray(totalArraySCH);
+  let worstArraySCH = await userData.getWorstArray(totalArraySCH);
+
+  //making them into strings so they can be displayed on the html properly
+  let bestUCC = bestArrayUCC[0] + " and " + bestArrayUCC[1];
+  let worstUCC = worstArrayUCC[0] + " and " + worstArrayUCC[1];
+  let bestSCH = bestArraySCH[0] + " and " + bestArraySCH[1];
+  let worstSCH = worstArraySCH[0] + " and " + worstArraySCH[1];
+
   res.render("homepage", {
     title: "Spotterfy",
     user_name: name,
@@ -299,6 +319,10 @@ router.route("/homepage").get(async (req, res) => {
     usersWorkingOut: visibleUsers.length,
     userVisibility: visibilityView,
     userReservations: userReservations,
+    bestTimesUCC: bestUCC,
+    worstTimesUCC: worstUCC,
+    bestTimesSCH: bestSCH,
+    worstTimesSCH: worstSCH,
   });
 });
 

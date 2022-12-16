@@ -115,6 +115,7 @@ p #reservation-info {
 
 h3 #visible-users {
     font-weight: "bold";
+    color: red;
 }
 
 h4 #workout-list {

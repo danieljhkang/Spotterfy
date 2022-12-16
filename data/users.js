@@ -5,6 +5,7 @@ const hotspots = mongoCollections.hotspots;
 const { ObjectId } = require("mongodb");
 const connection = require("../config/mongoConnection");
 const bcrypt = require("bcryptjs");
+const e = require("express");
 const saltRounds = 10;
 
 //creates a user and adds it to the mongo database, SETS VISIBILITY TO TRUE BY DEFAULT
@@ -411,6 +412,87 @@ const updateCurrentRegistered = async (
     }
   }
 };
+//inputs strings day and location
+//returns an array of total registered number of students per hour
+const getHotspots = async (day, location) => {
+  const hotspotsCollection = await hotspots();
+  if(location === "UCC"){
+    const dayObject = await hotspotsCollection.findOne({ day: day });
+    return dayObject.registeredAverageUCC;
+  }else{
+    const dayObject = await hotspotsCollection.findOne({day: day});
+    return dayObject.registeredAverageSCH;
+  }
+}
+
+const getBestArray = async (array) =>{
+  let tempArray = array;
+  let bestArray = [];
+  let addedIndex;
+  while(bestArray.length < 2){
+    var index = 0;
+    if(tempArray[0] == value){
+      var value = tempArray[1];
+      index = 1;
+    }else{
+      var value = tempArray[0];
+    }
+    for (var i = 1; i < tempArray.length; i++) {
+      if(i != addedIndex){
+        if (tempArray[i] < value) {
+          value = tempArray[i];
+          index = i;
+        }
+      }
+    }
+    if(index == 4){
+      bestArray.push("12PM");
+      addedIndex = index;
+    }else if(index > 3){
+      bestArray.push((index+8-12) + "PM");
+      addedIndex = index;
+    }else{
+      bestArray.push((index+8) + "AM");
+      addedIndex = index;
+    }
+  }
+  return bestArray;
+}
+
+const getWorstArray = async (array) =>{
+  let tempArray = array;
+  let worstArray = [];
+  let addedIndex;
+  while(worstArray.length < 2){
+    var index = 0;
+    if(tempArray[0] == value){
+      var value = tempArray[1];
+      index = 1;
+    }else{
+      var value = tempArray[0];
+    }
+    for (var i = 1; i< tempArray.length; i++){
+      if(i != addedIndex){
+        if(tempArray[i] > value){
+          value = tempArray[i];
+          index = i;
+        }
+      }
+    }
+    if(index == 4){
+      worstArray.push("12PM");
+      addedIndex = index;
+    }else if (index > 4){
+      worstArray.push((index+8-12) + "PM");
+      addedIndex = index;
+    }else{
+      worstArray.push((index+8) + "AM");
+      addedIndex = index;
+    }
+  }
+  console.log("WORST " + worstArray);
+  return worstArray;
+}
 
 module.exports = {
   createUser,
@@ -423,4 +505,7 @@ module.exports = {
   getVisibleUsers,
   getVisibility,
   updateReservations,
+  getHotspots,
+  getBestArray,
+  getWorstArray,
 };

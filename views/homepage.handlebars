@@ -24,12 +24,17 @@
                         <p>No reservations for today</p>
                 {{/if}}
             </div>
+            <h3>Hot Zones : </h3>
+            <p>Least Crowded Hours in UCC: {{bestTimesUCC}}</p>
+            <p>Most Crowded Hours in UCC: {{worstTimesUCC}}</p>
+            <p>Least Crowded Hours in Schaefer: {{bestTimesSCH}}</p>
+            <p>Most Crowded Hours in Schaefer: {{worstTimesSCH}}</p>
         </div>
         <div class="visible-users">
             {{#if usersWorkingOut}}
                 <h2>Who's Working Out Today?</h2>
             {{else}}
-                <h3 style="color:red;">NO PUBLIC USERS WORKING OUT</h3>
+                <h3>NO PUBLIC USERS WORKING OUT</h3>
             {{/if}}
             <p>
                 {{#each visibleUsers}}
