@@ -298,8 +298,6 @@ router.route("/homepage").get(async (req, res) => {
   let totalArrayUCC = await userData.getHotspots(dateArray[0], "UCC");
   let totalArraySCH = await userData.getHotspots(dateArray[0], "Schaefer");
 
-  console.log("total Array : " + totalArrayUCC);
-
   let bestArrayUCC = await userData.getBestArray(totalArrayUCC);
   let worstArrayUCC = await userData.getWorstArray(totalArrayUCC);
   let bestArraySCH = await userData.getBestArray(totalArraySCH);
