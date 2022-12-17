@@ -82,7 +82,7 @@ const createReservation = async (
   let endDate = new Date(`${fullDate.replace(/-/g, "/")} ${endTime}`);
   let totalReservationTime = endDate - startDate;
   const twoHoursInMilliseconds = 7200000;
-  let findMatchingReservation = userReservations.upcomingReservations.find(
+  let findMatchingReservation = await userReservations.upcomingReservations.find(
     (reservation) => {
       // If the new reservation times INTERSECT with any existing reservation times
       if (fullDate === reservation.date) {
@@ -124,8 +124,75 @@ const createReservation = async (
     { $push: { upcomingReservations: newReservation } }
   );
 
-  updateHotspots(fullDate, location, startTime, endTime);
-  updateCurrentRegistered(fullDate, location, startTime, endTime);
+  await updateHotspots(fullDate, location, startTime, endTime);
+  await updateCurrentRegistered(fullDate, location, startTime, endTime);
+
+  if (updatedInfo.modifiedCount === 0) return { createdReservation: false };
+  else return { createdReservation: true };
+};
+
+//only use for the seed file
+const createReservationDemo = async (
+  userEmail,
+  fullDate,
+  startTime,
+  endTime,
+  location,
+  workouts
+) => {
+  // If a reservation in the same time frame already exists, it is invalid
+  const usersCollection = await users();
+  const userReservations = await usersCollection.findOne(
+    { email: userEmail },
+    { projection: { _id: 0, upcomingReservations: 1 } }
+  );
+  let startDate = new Date(`${fullDate.replace(/-/g, "/")} ${startTime}`);
+  let endDate = new Date(`${fullDate.replace(/-/g, "/")} ${endTime}`);
+  let totalReservationTime = endDate - startDate;
+  const twoHoursInMilliseconds = 7200000;
+  let findMatchingReservation = await userReservations.upcomingReservations.find(
+    (reservation) => {
+      // If the new reservation times INTERSECT with any existing reservation times
+      if (fullDate === reservation.date) {
+        let existingStart = new Date(
+          `${reservation.date.replace(/-/g, "/")} ${reservation.startTime}`
+        );
+        let existingEnd = new Date(
+          `${reservation.date.replace(/-/g, "/")} ${reservation.endTime}`
+        );
+        totalReservationTime += endDate - startDate;
+        if (existingStart <= startDate && startDate < existingEnd) return true;
+        if (existingStart < endDate && endDate <= existingEnd) return true;
+      }
+      return false;
+    }
+  );
+
+  if (findMatchingReservation)
+    throw "Already have reservation with these times";
+
+  if (totalReservationTime > twoHoursInMilliseconds)
+    throw "Can only reserve a maximum of two hours a day";
+
+  // Create and insert a new reservation
+  const reservationId = new ObjectId();
+  let newReservation = {
+    _id: reservationId,
+    date: fullDate,
+    startTime: startTime,
+    endTime: endTime,
+    location: location,
+    workouts: workouts,
+    checked: false,
+  };
+
+  const updatedInfo = await usersCollection.updateOne(
+    { email: userEmail },
+    { $push: { upcomingReservations: newReservation } }
+  );
+
+  await updateHotspots(fullDate, location, startTime, endTime);
+  await updateCurrentRegisteredDemo(fullDate, location, startTime, endTime);
 
   if (updatedInfo.modifiedCount === 0) return { createdReservation: false };
   else return { createdReservation: true };
@@ -509,13 +576,6 @@ const updateCurrentRegistered = async (
       registeredAverage[startDate.getHours() - 8]++;
       registeredAverage[endDate.getHours() - 8]++;
     }
-    // My suggested correction
-    // if (timeDiff < 2) {
-    //     registeredAverage[startDate.getHours()-8]++;
-    // } else {
-    //     registeredAverage[startDate.getHours()-8]++;
-    //     registeredAverage[endDate.getHours()-9]++;
-    // }
     if (location === "UCC") {
       const updatedAverage = await hotspotsCollection.updateOne(
         { day: day },
@@ -528,6 +588,56 @@ const updateCurrentRegistered = async (
       );
     }
   }
+};
+
+//Use for the seed file only
+const updateCurrentRegisteredDemo = async (
+  fullDate,
+  location,
+  startTime,
+  endTime
+) => {
+    let startDate = new Date(`${fullDate} ${startTime}`);
+    let endDate = new Date(`${fullDate} ${endTime}`);
+    const day = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
+      startDate
+    );
+
+    // Return the registered average array for the appropriate location
+    const hotspotsCollection = await hotspots();
+    let hotspotsDay = await hotspotsCollection.findOne({ day: day });
+    let registeredAverage =
+      location === "UCC"
+        ? hotspotsDay.currentRegisteredUCC
+        : hotspotsDay.currentRegisteredSCH;
+
+    //this is to add to the hotspots collection
+    let timeDiff = endDate.getHours() - startDate.getHours();
+    //[8am, 9am, 10am, 11am, 12pm, 1pm, 2pm, 3pm, 4pm, 5pm, 6pm, 7pm, 8pm, 9pm, 10pm, 11pm]
+    //add 1 in the array indexes in which the reservations reside (check the hours in the start time and end time)
+    //populate the array with zeros if there arn't any
+    if (timeDiff < 1) {
+      registeredAverage[startDate.getHours() - 8]++;
+    } else if (timeDiff === 2) {
+      registeredAverage[startDate.getHours() - 8]++;
+      registeredAverage[endDate.getHours() - 9]++;
+    } else {
+      // I don't think this needs to be here because we either update one hour or two hours, which is the maximum
+      registeredAverage[startDate.getHours() - 8]++;
+      registeredAverage[endDate.getHours() - 8]++;
+    }
+    if (location === "UCC") {
+      const updatedAverage = await hotspotsCollection.updateOne(
+        { day: day },
+        { $set: { currentRegisteredUCC: registeredAverage } }
+      );
+    } else {
+      const updatedAverage = await hotspotsCollection.updateOne(
+        { day: day },
+        { $set: { currentRegisteredSCH: registeredAverage } }
+      );
+    }
+  
 };
 //inputs strings day and location
 //returns an array of total registered number of students per hour
@@ -623,6 +733,7 @@ const getCurrentRegisteredArray = async (day, location) => {
 module.exports = {
   createUser,
   createReservation,
+  createReservationDemo,
   checkUserAuth,
   getFirstName,
   getUserByEmail,

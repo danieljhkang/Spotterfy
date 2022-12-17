@@ -4,6 +4,7 @@
   "description": "A project by Rohan Balani, Daniel Kang, Ryan Lee, and Ken Yun",
   "main": "app.js",
   "scripts": {
+    "seed": "node ./tasks/seed.js",
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
