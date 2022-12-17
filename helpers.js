@@ -17,12 +17,12 @@ let validUsername = (username) => {
 
 // check email
 let validEmail = (email) => {
+  email = validString(email).toLowerCase();
   // email must be supplied
   if (!email) throw "Please provide email";
   // email should be a valid string (no empty spaces, no spaces in email and only alphanumeric characters besides "@" and ".")
   if (typeof email !== "string" || email.trim().length === 0)
     throw "Email must be a non-empty string";
-  email = email.trim().toLowerCase();
   // split email at "@" to check for username and stevens email
   const splitEmail = email.split("@");
   if (splitEmail.length !== 2) throw "Please provide a valid Stevens email";
@@ -35,6 +35,7 @@ let validEmail = (email) => {
   }
   if (stevensEmail !== "stevens.edu")
     throw "Please provide a valid Stevens email";
+  return email;
 };
 
 // check password
