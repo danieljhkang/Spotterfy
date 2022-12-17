@@ -97,7 +97,7 @@ const main = async() => {
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = today.getFullYear();
     
-    today = yyyy + '-' + mm + '-' + dd;
+    today = yyyy + '/' + mm + '/' + dd;
 
     const reservation1 = await users.createReservationDemo(
         "bmcbob@stevens.edu",
