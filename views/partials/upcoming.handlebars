@@ -1,0 +1,13 @@
+<div class="reservation-item">
+    <p id="reservation">{{date}}: {{startTime}} - {{endTime}} ({{location}})</p>
+    {{#if workouts}}
+        <p>{{workouts}}</p>
+    {{/if}}
+    {{#if timeToCheckIn}}
+        {{#if checked}}
+            <em>Checked In!</em>
+        {{else}}
+            <a class="checkIn" data-id="{{_id}}">Check In</a>
+        {{/if}}
+    {{/if}}
+</div>

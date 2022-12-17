@@ -335,14 +335,13 @@ router.route("/homepage").get(async (req, res) => {
     worstTimesSCH: worstSCH,
     todaysReservationsArrayUCC: currentRegisteredArrayUCC,
     todaysReservationsArraySCH: currentRegisteredArraySCH,
-    timeToCheckIn: timeToCheckIn,
   });
 });
 
 // unfinished ajax post request
 router.route("/homepage/checked/:id").post(async (req, res) => {
   const updatedData = userData.checkedIn(req.session.user.email, req.params.id);
-  res.render("upcoming", { layout: null, ...updatedData });
+  res.render("partials/upcoming", { layout: null, ...updatedData });
 });
 
 router.route("/logout").get(async (req, res) => {

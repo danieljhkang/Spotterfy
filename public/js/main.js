@@ -1,13 +1,15 @@
 (function ($) {
+  var userReservations = $("#user-reservations");
+
   function bindEventsToCheckIn(reservation) {
     reservation.find(".checkIn").on("click", function (event) {
       event.preventDefault();
       var currentLink = $(this);
-      var currentId = currentLink.data("id");
+      var currentId = currentLink.data("_id");
 
       var requestConfig = {
         method: "POST",
-        url: "/users/homepage/checked/" + currentId,
+        url: "/routesAPI/homepage/checked/" + currentId,
       };
 
       $.ajax(requestConfig).then(function (responseMessage) {
@@ -17,4 +19,8 @@
       });
     });
   }
+
+  userReservations.children().each(function (index, element) {
+    bindEventsToCheckIn($(element));
+  });
 })(window.jQuery);

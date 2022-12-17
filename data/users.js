@@ -115,6 +115,7 @@ const createReservation = async (
     endTime: endTime,
     location: location,
     workouts: workouts,
+    timeToCheckIn: false,
     checked: false,
   };
 
@@ -346,6 +347,17 @@ const timeToCheckIn = async (email) => {
     itTime = true;
   }
 
+  if (itTime) {
+    const userCollection = await users();
+    const updatedInfo = await userCollection.updateOne(
+      {
+        email: email,
+        upcomingReservations: upcoming,
+      },
+      { $set: { "upcomingReservations.0.timeToCheckIn": itTime } }
+    );
+  }
+
   return itTime;
 };
 
@@ -372,7 +384,7 @@ const getReservationById = async (id) => {
   return res;
 };
 
-// mark reservation as checked in
+// mark reservation as checked in and return updated reservation
 const checkedIn = async (email, id) => {
   const res = await getReservationById(id);
   const userCollection = await users();
@@ -391,7 +403,9 @@ const checkedIn = async (email, id) => {
     throw "could not update visibility successfully";
   }
 
-  return true;
+  const update = await getReservationById(id);
+
+  return update;
 };
 
 const getVisibility = async (email) => {

@@ -8,18 +8,7 @@
                 <h3>Upcoming Reservations:</h3>
                 {{#if userReservations}}
                     {{#each userReservations}}
-                        <p id="reservation">{{date}}: {{startTime}} - {{endTime}} ({{location}})</p>
-                        {{#if workouts}}
-                            <p>{{workouts}}</p>
-                        {{/if}}
-                        {{#if timeToCheckIn}}
-                            {{#if checked}}
-                                <em>Checked In!</em>
-                            {{else}}
-                                <p>not checked in yet</p>
-                                <a class="checkIn" data-id="{{id}}">Check In</a>
-                            {{/if}}
-                        {{/if}}
+                        {{> upcoming}}
                     {{/each}}
                     {{else}}
                         <p>No reservations for today</p>
@@ -52,9 +41,7 @@
             </p>
         </div>
     </div>
-    <h3 class="graph-title">Today's Reservations @ UCC</h3>
     <div class="reservationGraph" id="todaysReservationsGraphUCC"></div>
-    <h3 class="graph-title">Today's Reservations @ Schaefer</h3>
     <div class="reservationGraph" id="todaysReservationsGraphSCH"></div>
     <script>
         Plotly.newPlot("todaysReservationsGraphUCC",{
