@@ -6,17 +6,17 @@
       </div>
     {{/if}}
     <form id="register-form" action="register" method="POST">
-      <label for="firstNameInput">First Name</label>
-      <input type="text" id="firstNameInput" name="firstNameInput" />
+      <label for="firstNameInput" required pattern="[a-z]i">First Name</label>
+      <input type="text" id="firstNameInput" name="firstNameInput" placeholder="First Name" required/>
       <label for="lastNameInput">Last Name: </label>
-      <input type="text" id="lastNameInput" name="lastNameInput" />
+      <input type="text" id="lastNameInput" name="lastNameInput" placeholder="Last Name" required/>
       <label for="emailInput">Email: </label>
-      <input type="email" id="emailInput" name="emailInput" />
-      <label for="cwidInput">CWID: </label>
-      <input type="text" id="cwidInput" name="cwidInput"/>
+      <input type="email" id="emailInput" name="emailInput" placeholder="Email" required/>
+      <label for="cwidInput" pattern="[0-9]{8}">CWID: </label>
+      <input type="text" id="cwidInput" name="cwidInput" maxLength="8" placeholder="CWID" required/>
       <label>Class</label>
-      <select id="classInput" name="classInput">
-        <option value="" selected></option>
+      <select id="classInput" name="classInput"required>
+        <option value="" selected>-- Select an option --</option>
         <option value="freshman">Freshman</option>
         <option value="sophomore">Sophomore</option>
         <option value="junior">Junior</option>
@@ -25,8 +25,9 @@
         <option value="other">Other</option>
       </select>
       <label for="passwordInput">Password: </label>
-      <input type="password" id="passwordInput" name="passwordInput" />
+      <input type="password" id="passwordInput" name="passwordInput" placeholder="Password" required/>
       <button type="submit" class="register">Sign Up</button>
       </form><p class="form-link-text">Already have an account? <a class="form-link" href="/login">Sign in</a></p>
   </div>
 </main>
+<script src="/public/js/register-form.js"></script>
