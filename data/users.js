@@ -11,10 +11,13 @@ const saltRounds = 10;
 //creates a user and adds it to the mongo database, SETS VISIBILITY TO TRUE BY DEFAULT
 const createUser = async (firstName, lastName, email, cwid, year, password) => {
   // check user input
-  helpers.validString(firstName, "first name");
-  helpers.validString(lastName, "last name");
-  helpers.validEmail(email);
+  firstName = helpers.validString(firstName, "First name");
+  lastName = helpers.validString(lastName, "Last name");
+  email = helpers.validEmail(email, "Email");
   helpers.validCWID(cwid);
+  year = helpers.validString(year, "Class year").toLowerCase();
+  let validYears = ["freshman", "sophomore", "junior", "senior", "other"];
+  if (!validYears.includes(year)) throw `$\"{year}\" is not a valid class year`;
   helpers.validPW(password);
 
   // check if user already exists
@@ -28,8 +31,6 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
   // hash password using bcrypt
   const hash = await bcrypt.hash(password, saltRounds);
 
-  firstName = firstName.toLowerCase();
-  lastName = lastName.toLowerCase();
   let capitalizedFirst =
     firstName.charAt(0).toUpperCase() + firstName.substring(1);
   let capitalizedLast =
@@ -322,44 +323,46 @@ const updateReservations = async (email) => {
   const user = await getUserByEmail(email);
 
   // get current date
-  let d = new Date();
-  let year = d.getFullYear();
-  let fullDate = (d.getDate() < 10 ? "0" : "") + d.getDate();
-  let month = d.getMonth();
-  let currentDate = `${year}/${month + 1}/${fullDate}`;
-  const today = new Date(currentDate).getTime();
+  let todayDate = new Date();
+//   let year = d.getFullYear();
+//   let fullDate = (d.getDate() < 10 ? "0" : "") + d.getDate();
+//   let month = d.getMonth();
+//   let currentDate = `${year}/${month + 1}/${fullDate}`;
+//   const today = new Date(currentDate).getTime();
 
   // initialize upcoming and previous reservations
   const updateUpcoming = user.upcomingReservations;
   const updatePrevious = user.previousReservations;
 
   upcoming.forEach((res) => {
-    let resDate = new Date(res.date).getTime();
-    // if before current date, remove from upcoming and add previous
-    if (resDate < today) {
-      updatePrevious.push(res);
-      let index = updateUpcoming.indexOf(res);
-      updateUpcoming.splice(index, 1);
+    // Need date formatted with slash because Date object is finnicky with hyphen dates
+    let dateWithSlash = res.date.replace(/-/g, '\/');
+    let resDate = new Date(`${dateWithSlash} ${res.endTime}`);
+    // If reservation has passed, move into previous reservations
+    if (resDate < todayDate) {
+        updatePrevious.push(res);
+        index = updateUpcoming.indexOf(res);
+        updateUpcoming.splice(index, 1);
     }
 
     // if current date but before current time, remove from upcoming and add previous
-    let d = new Date();
-    let hourNow = d.getHours();
-    let minNow = d.getMinutes();
+    // let d = new Date();
+    // let hourNow = d.getHours();
+    // let minNow = d.getMinutes();
 
-    let endTime = helpers.convertTimeToMilitary(res.endTime);
-    let splitTime = endTime.split(":");
-    let endHour = parseInt(splitTime[0]);
-    let endMin = parseInt(splitTime[1]);
-
-    if (
-      resDate == today &&
-      (endHour < hourNow || (endHour === hourNow && endMin < minNow))
-    ) {
-      updatePrevious.push(res);
-      index = updateUpcoming.indexOf(res);
-      updateUpcoming.splice(index, 1);
-    }
+    // let endTime = helpers.convertTimeToMilitary(res.endTime);
+    // let splitTime = endTime.split(":");
+    // let endHour = parseInt(splitTime[0]);
+    // let endMin = parseInt(splitTime[1]);
+    
+    // if (
+    //   resDate == today &&
+    //   (endHour < hourNow || (endHour === hourNow && endMin < minNow))
+    // ) {
+    //   updatePrevious.push(res);
+    //   index = updateUpcoming.indexOf(res);
+    //   updateUpcoming.splice(index, 1);
+    // }
   });
 
   // update reservations
