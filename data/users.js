@@ -285,7 +285,10 @@ const updateReservations = async (email) => {
     let endHour = parseInt(splitTime[0]);
     let endMin = parseInt(splitTime[1]);
 
-    if (resDate == today && endHour <= hourNow && endMin < minNow) {
+    if (
+      resDate == today &&
+      (endHour < hourNow || (endHour === hourNow && endMin < minNow))
+    ) {
       updatePrevious.push(res);
       index = updateUpcoming.indexOf(res);
       updateUpcoming.splice(index, 1);
