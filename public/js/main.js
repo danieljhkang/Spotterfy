@@ -1,7 +1,7 @@
 (function ($) {
   var userReservations = $("#user-reservations");
 
-  function bindEventsToCheckIn(reservation) {
+  function bindEventsToReservation(reservation) {
     reservation.find(".checkIn").on("click", function (event) {
       event.preventDefault();
       var currentLink = $(this);
@@ -14,13 +14,13 @@
 
       $.ajax(requestConfig).then(function (responseMessage) {
         var newElement = $(responseMessage);
-        bindEventsToCheckIn(newElement);
+        bindEventsToReservation(newElement);
         reservation.replaceWith(newElement);
       });
     });
   }
 
   userReservations.children().each(function (index, element) {
-    bindEventsToCheckIn($(element));
+    bindEventsToReservation($(element));
   });
 })(window.jQuery);
