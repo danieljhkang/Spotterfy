@@ -16,7 +16,7 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
   email = helpers.validEmail(email, "Email");
   helpers.validCWID(cwid);
   year = helpers.validString(year, "Class year").toLowerCase();
-  let validYears = ["freshman", "sophomore", "junior", "senior", "other"];
+  let validYears = ["freshman", "sophomore", "junior", "senior", "graduate", "other"];
   if (!validYears.includes(year)) throw `$\"{year}\" is not a valid class year`;
   helpers.validPW(password);
 
@@ -83,8 +83,8 @@ const createReservation = async (
   let endDate = new Date(`${fullDate.replace(/-/g, "/")} ${endTime}`);
   let totalReservationTime = endDate - startDate;
   const twoHoursInMilliseconds = 7200000;
-  let findMatchingReservation = await userReservations.upcomingReservations.find(
-    (reservation) => {
+  let findMatchingReservation =
+    await userReservations.upcomingReservations.find((reservation) => {
       // If the new reservation times INTERSECT with any existing reservation times
       if (fullDate === reservation.date) {
         let existingStart = new Date(
@@ -98,8 +98,7 @@ const createReservation = async (
         if (existingStart < endDate && endDate <= existingEnd) return true;
       }
       return false;
-    }
-  );
+    });
 
   if (findMatchingReservation)
     throw "Already have reservation with these times";
@@ -151,8 +150,8 @@ const createReservationDemo = async (
   let endDate = new Date(`${fullDate.replace(/-/g, "/")} ${endTime}`);
   let totalReservationTime = endDate - startDate;
   const twoHoursInMilliseconds = 7200000;
-  let findMatchingReservation = await userReservations.upcomingReservations.find(
-    (reservation) => {
+  let findMatchingReservation =
+    await userReservations.upcomingReservations.find((reservation) => {
       // If the new reservation times INTERSECT with any existing reservation times
       if (fullDate === reservation.date) {
         let existingStart = new Date(
@@ -166,8 +165,7 @@ const createReservationDemo = async (
         if (existingStart < endDate && endDate <= existingEnd) return true;
       }
       return false;
-    }
-  );
+    });
 
   if (findMatchingReservation)
     throw "Already have reservation with these times";
@@ -415,6 +413,7 @@ const timeToCheckIn = async (email) => {
     nextRes.date === currentDate &&
     (startHour <= hourNow || endHour >= hourNow) &&
     timeDiff <= 10 &&
+    timeDiff >= -10 &&
     resTime >= timeNow
   ) {
     itTime = true;
@@ -600,47 +599,46 @@ const updateCurrentRegisteredDemo = async (
   startTime,
   endTime
 ) => {
-    let startDate = new Date(`${fullDate} ${startTime}`);
-    let endDate = new Date(`${fullDate} ${endTime}`);
-    const day = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
-      startDate
+  let startDate = new Date(`${fullDate} ${startTime}`);
+  let endDate = new Date(`${fullDate} ${endTime}`);
+  const day = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
+    startDate
+  );
+
+  // Return the registered average array for the appropriate location
+  const hotspotsCollection = await hotspots();
+  let hotspotsDay = await hotspotsCollection.findOne({ day: day });
+  let registeredAverage =
+    location === "UCC"
+      ? hotspotsDay.currentRegisteredUCC
+      : hotspotsDay.currentRegisteredSCH;
+
+  //this is to add to the hotspots collection
+  let timeDiff = endDate.getHours() - startDate.getHours();
+  //[8am, 9am, 10am, 11am, 12pm, 1pm, 2pm, 3pm, 4pm, 5pm, 6pm, 7pm, 8pm, 9pm, 10pm, 11pm]
+  //add 1 in the array indexes in which the reservations reside (check the hours in the start time and end time)
+  //populate the array with zeros if there arn't any
+  if (timeDiff < 1) {
+    registeredAverage[startDate.getHours() - 8]++;
+  } else if (timeDiff === 2) {
+    registeredAverage[startDate.getHours() - 8]++;
+    registeredAverage[endDate.getHours() - 9]++;
+  } else {
+    // I don't think this needs to be here because we either update one hour or two hours, which is the maximum
+    registeredAverage[startDate.getHours() - 8]++;
+    registeredAverage[endDate.getHours() - 8]++;
+  }
+  if (location === "UCC") {
+    const updatedAverage = await hotspotsCollection.updateOne(
+      { day: day },
+      { $set: { currentRegisteredUCC: registeredAverage } }
     );
-
-    // Return the registered average array for the appropriate location
-    const hotspotsCollection = await hotspots();
-    let hotspotsDay = await hotspotsCollection.findOne({ day: day });
-    let registeredAverage =
-      location === "UCC"
-        ? hotspotsDay.currentRegisteredUCC
-        : hotspotsDay.currentRegisteredSCH;
-
-    //this is to add to the hotspots collection
-    let timeDiff = endDate.getHours() - startDate.getHours();
-    //[8am, 9am, 10am, 11am, 12pm, 1pm, 2pm, 3pm, 4pm, 5pm, 6pm, 7pm, 8pm, 9pm, 10pm, 11pm]
-    //add 1 in the array indexes in which the reservations reside (check the hours in the start time and end time)
-    //populate the array with zeros if there arn't any
-    if (timeDiff < 1) {
-      registeredAverage[startDate.getHours() - 8]++;
-    } else if (timeDiff === 2) {
-      registeredAverage[startDate.getHours() - 8]++;
-      registeredAverage[endDate.getHours() - 9]++;
-    } else {
-      // I don't think this needs to be here because we either update one hour or two hours, which is the maximum
-      registeredAverage[startDate.getHours() - 8]++;
-      registeredAverage[endDate.getHours() - 8]++;
-    }
-    if (location === "UCC") {
-      const updatedAverage = await hotspotsCollection.updateOne(
-        { day: day },
-        { $set: { currentRegisteredUCC: registeredAverage } }
-      );
-    } else {
-      const updatedAverage = await hotspotsCollection.updateOne(
-        { day: day },
-        { $set: { currentRegisteredSCH: registeredAverage } }
-      );
-    }
-  
+  } else {
+    const updatedAverage = await hotspotsCollection.updateOne(
+      { day: day },
+      { $set: { currentRegisteredSCH: registeredAverage } }
+    );
+  }
 };
 //inputs strings day and location
 //returns an array of total registered number of students per hour

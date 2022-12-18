@@ -202,7 +202,14 @@ router
     });
   })
   .post(async (req, res) => {
-    let fullDate = xss(req.body.date);
+    // let fullDate = xss(req.body.date);
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    
+    today = yyyy + '-' + mm + '-' + dd;
+    let fullDate = today;
     let startTime = xss(req.body.startTime);
     let endTime = xss(req.body.endTime);
     let location = xss(req.body.location);
