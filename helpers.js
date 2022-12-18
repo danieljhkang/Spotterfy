@@ -17,7 +17,7 @@ let validUsername = (username) => {
 
 // check email
 let validEmail = (email) => {
-  email = validString(email).toLowerCase();
+  email = validString(email);
   // email must be supplied
   if (!email) throw "Please provide email";
   // email should be a valid string (no empty spaces, no spaces in email and only alphanumeric characters besides "@" and ".")
@@ -81,7 +81,7 @@ let validString = (str, varName) => {
   // string should be a valid string (no empty spaces, no spaces in username and only alphanumeric characters)
   if (typeof str !== "string" || str.trim().length === 0)
     throw `${varName} must be a non-empty string`;
-  return str.trim();
+  return str.trim().toLowerCase();
 };
 
 /* Takes a time in miiltary format and converts it to cilivian format "hh:mm [AM/PM]" */
@@ -114,7 +114,7 @@ let convertTimeToMilitary = (time) => {
 
 let validTime = (time, type) => {
   time = validString(time);
-  if (!/^\d{1,2}:\d{2} (AM|PM)$/.test(time))
+  if (!/^\d{1,2}:\d{2} (am|pm)$/.test(time))
     throw `${type} must be in the format hh:mm (AM|PM)`;
   splitTime = time.split(" ");
   let [hours, minutes] = splitTime[0].split(":").map((elem) => parseInt(elem));
@@ -129,7 +129,7 @@ let validReservation = (fullDate, startTime, endTime, location, workouts) => {
     if (startTime === undefined) throw "Must provide start time for reservation";
     if (endTime === undefined) throw "Must provide end time for reservatin";
     if (location === undefined) throw "Must provide location for reservation";
-    if (workouts === undefined) throw "Must provide an option for workouts";
+    if (workouts === undefined) workouts = ['none'];
 
     // Check if string inputs are valid strings
     fullDate = validString(fullDate, "Reservation date");
@@ -138,22 +138,22 @@ let validReservation = (fullDate, startTime, endTime, location, workouts) => {
     location = validString(location, "Location");
     workouts = Array.isArray(workouts) ? workouts : [workouts];
     let validWorkouts = {
-        Arms: "Arms",
-        Legs: "Legs",
-        Back: "Back",
-        Chest: "Chest",
-        Shoulders: "Shoulders",
-        Abs: "Abs",
-        Cardio: "Cardio",
-        Calisthenics: "Calisthenics",
-        Yoga: "Yoga",
-        Other: "Other",
-        None: "No workouts listed"
+        arms: "Arms",
+        legs: "Legs",
+        back: "Back",
+        chest: "Chest",
+        shoulders: "Shoulders",
+        abs: "Abs",
+        cardio: "Cardio",
+        calisthenics: "Calisthenics",
+        yoga: "Yoga",
+        other: "Other",
+        none: "No workouts listed"
     }
     for (let i = 0; i < workouts.length; i++) {
-        workouts[i] = validString(workouts[i], "Workout");
+        lowercaseStr = validString(workouts[i], "Workout");
         if (validWorkouts[workouts[i]] === undefined) throw `\"${workouts[i]}\" is not a valid workout`;
-        workouts[i] = validWorkouts[workouts[i]];
+        workouts[i] = validWorkouts(lowercaseStr);
     }
 
     // Check if inputs are in the correct format
@@ -163,11 +163,11 @@ let validReservation = (fullDate, startTime, endTime, location, workouts) => {
     validTime(startTime, "Start time");
     validTime(endTime, "End time");
     // Location
-    if (location !== "UCC" && location !== "Schaefer") throw `${location} is not a valid location`;
+    if (location !== "ucc" && location !== "schaefer") throw `${location} is not a valid location`;
 
     // Check if date and time is valid
     let currDate = new Date();
-    let currDateAtMidnight = new Date(currDate.toDateString());
+    currDateAtMidnight.setHours(0,0,0);
     // Need to replace hyphens with forward slash cause JS Date object is weird
     fullDate = fullDate.replace(/-/g, "\/");
     let reservationDate = new Date(fullDate);

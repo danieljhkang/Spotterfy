@@ -89,11 +89,11 @@ router
     let password = xss(req.body.passwordInput);
 
     try {
-      helpers.validString(firstName, "First name");
-      helpers.validString(lastName, "Last name");
-      helpers.validEmail(email);
+      firstName = helpers.validString(firstName, "First name");
+      lastName = helpers.validString(lastName, "Last name");
+      email = helpers.validEmail(email);
       helpers.validCWID(cwid);
-      if (year.trim().length === 0) throw "Please provide a class";
+      year = helpers.validString(year, "Class year");
       helpers.validPW(password);
 
       const createdUser = await userData.createUser(
@@ -164,7 +164,8 @@ router
     try {
       let visibility = await userData.switchVisibility(email);
     } catch (e) {
-      return res.status(400).json({ error: e });
+      res.status(400).json({ error: e });
+      return;
     }
 
     //Update and display missed reservations and checkin times in the past week
@@ -237,17 +238,7 @@ router
     let currentDate = date.toISOString().substring(0, 10);
     let oneYearFromToday = dateOneYear.toISOString().substring(0, 10);
     try {
-      if (fullDate === undefined) throw "Must provide date for reservation";
-      if (startTime === undefined)
-        throw "Must provide start time for reservation";
-      if (endTime === undefined) throw "Must provide end time for reservatin";
-      if (location === undefined) throw "Must provide location for reservation";
-      if (workouts === undefined) throw "Must provide an option for workouts";
-      fullDate = fullDate.trim();
-      startTime = startTime.trim();
-      endTime = endTime.trim();
-      location = location.trim();
-      helpers.validReservation(
+      [fullDate, startTime, endTime, location, workouts] = helpers.validReservation(
         fullDate,
         startTime,
         endTime,
