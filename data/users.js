@@ -16,7 +16,7 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
   email = helpers.validEmail(email, "Email");
   helpers.validCWID(cwid);
   year = helpers.validString(year, "Class year").toLowerCase();
-  let validYears = ["freshman", "sophomore", "junior", "senior", "other"];
+  let validYears = ["freshman", "sophomore", "junior", "senior", "graduate", "other"];
   if (!validYears.includes(year)) throw `$\"{year}\" is not a valid class year`;
   helpers.validPW(password);
 
