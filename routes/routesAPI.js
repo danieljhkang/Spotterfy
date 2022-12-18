@@ -140,6 +140,14 @@ router
     lastName = firstLetter + remainingLetters;
     fullName = firstName + " " + lastName;
 
+      //Update and display missed reservations and checkin times in the past week
+      try {
+        let missedReservationFunc = await userData.getNumberofReservationsStatus(email, false);
+        let checkInReservationFunc = await userData.getNumberofReservationsStatus(email, true);
+      } catch (e) {
+        return res.status(400).json({ error: e });
+      }
+
     res.render("profile", {
       title: "Spotterfy",
       fullName: fullName,
@@ -155,6 +163,14 @@ router
     let email = req.session.user.email;
     try {
       let visibility = await userData.switchVisibility(email);
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
+
+    //Update and display missed reservations and checkin times in the past week
+    try {
+      let missedReservationFunc = await userData.getNumberofReservationsStatus(email, false);
+      let checkInReservationFunc = await userData.getNumberofReservationsStatus(email, true);
     } catch (e) {
       return res.status(400).json({ error: e });
     }

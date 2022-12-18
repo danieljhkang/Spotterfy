@@ -732,6 +732,62 @@ const getCurrentRegisteredArray = async (day, location) => {
   return currentRegistered;
 };
 
+/* Function to get the number of checkedIn/missed times (specified as true/false) in previousReservations array 
+  For getting all missed reservations parameters: (<email>, false)
+  For getting all checked in reservations in the past week parameters: (<email, true) */
+const getNumberofReservationsStatus = async (email, reservationStatus) => {
+  const userCollection = await users();
+  const userPreviousReservations = await userCollection.findOne(
+    { email: email },
+    { projection: { _id: 0, previousReservations: 1 } }
+  );
+
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  let dateAsObject;
+
+  let count = 0;
+
+  for(let workout of userPreviousReservations.previousReservations) {
+    //If updating checked in reservations in the past week
+    if(!reservationStatus){
+      if(workout.checked === reservationStatus)
+        count++
+    }
+
+    //If updating checkins in the past week
+    else{
+      dateAsObject = new Date(workout.date.replace(/-/g, "\/"));
+      if((workout.checked === reservationStatus) && dateAsObject >= oneWeekAgo)
+        count++;
+    }
+  }
+
+  //If updating missed reservations
+  if(!reservationStatus){
+    const updatedInfo = await userCollection.updateOne(
+      { email: email },
+      {
+        $set: {
+          monthlyMissedReservations: count
+        },
+      }
+    );
+  }
+
+  //If updating checkins in the past week
+  else{
+    const updatedInfo = await userCollection.updateOne(
+      { email: email },
+      {
+        $set: {
+          weeklyCheckIns: count
+        },
+      }
+    );
+  }
+}
+
 module.exports = {
   createUser,
   createReservation,
@@ -750,4 +806,5 @@ module.exports = {
   getCurrentRegisteredArray,
   timeToCheckIn,
   checkedIn,
+  getNumberofReservationsStatus
 };

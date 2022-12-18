@@ -172,7 +172,7 @@ const main = async () => {
     });
   }
   // try{
-  //   var c = await usersData.getCurrentRegisteredArray("Thursday", "UCC");
+  //   var c = await usersData.getNumberofReservationsStatus("bmcbob@stevens.edu", true);
   //   console.log(c)
   // }catch(e)
   // {
