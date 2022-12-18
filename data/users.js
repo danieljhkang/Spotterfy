@@ -739,7 +739,7 @@ const getNumberofReservationsStatus = async (email, reservationStatus) => {
   const userCollection = await users();
   const userPreviousReservations = await userCollection.findOne(
     { email: email },
-    { projection: { _id: 0, previousReservations: 1 } }
+    { projection: { _id: 0, previousReservations: 1, upcomingReservations: 1 } }
   );
 
   const oneWeekAgo = new Date();
@@ -762,6 +762,11 @@ const getNumberofReservationsStatus = async (email, reservationStatus) => {
         count++;
     }
   }
+
+  if(reservationStatus)
+    for(let workout of userPreviousReservations.upcomingReservations)
+      if((workout.checked === reservationStatus))
+          count++;
 
   //If updating missed reservations
   if(!reservationStatus){
