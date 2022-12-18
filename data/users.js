@@ -15,7 +15,7 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
   lastName = helpers.validString(lastName, "Last name");
   email = helpers.validEmail(email, "Email");
   helpers.validCWID(cwid);
-  year = helpers.validString(year, "Class year").toLowerCase();
+  year = helpers.validString(year, "Class year");
   let validYears = ["freshman", "sophomore", "junior", "senior", "graduate", "other"];
   if (!validYears.includes(year)) throw `$\"{year}\" is not a valid class year`;
   helpers.validPW(password);
@@ -40,7 +40,7 @@ const createUser = async (firstName, lastName, email, cwid, year, password) => {
     cwid: cwid,
     firstName: capitalizedFirst,
     lastName: capitalizedLast,
-    email: email.toLowerCase().trim(),
+    email: email,
     hashPassword: hash,
     year: year,
     visible: true,
@@ -199,7 +199,7 @@ const createReservationDemo = async (
 
 /* Changes the visibility of a user and RETURNS THE UPDATED VISIBILITY */
 const switchVisibility = async (email) => {
-  helpers.validEmail(email);
+  email = helpers.validEmail(email);
   const userCollection = await users();
   let found = await userCollection.findOne({ email: email });
   if (!found) throw "A user with this email doesn't exist";
@@ -255,7 +255,7 @@ const getVisibleUsers = async () => {
 //checks to see if the user is currently authenticated
 const checkUserAuth = async (email, password) => {
   // validate inputs
-  helpers.validEmail(email);
+  email = helpers.validEmail(email);
   helpers.validPW(password);
 
   // find user
@@ -274,7 +274,7 @@ const checkUserAuth = async (email, password) => {
 
 //returns the string first name of the user
 const getFirstName = async (email) => {
-  helpers.validEmail(email);
+  email = helpers.validEmail(email);
   const userCollection = await users();
   email = email.trim().toLowerCase();
   let exist = await userCollection.findOne({ email: email });
@@ -283,7 +283,7 @@ const getFirstName = async (email) => {
 
 // get user by email
 const getUserByEmail = async (email) => {
-  helpers.validEmail(email);
+  email = helpers.validEmail(email);
   const userCollection = await users();
   email = email.trim().toLowerCase();
   let user = await userCollection.findOne({ email: email });
@@ -292,7 +292,7 @@ const getUserByEmail = async (email) => {
 
 // get upcoming reservations of user
 const getUpcoming = async (email) => {
-  helpers.validEmail(email);
+  email = helpers.validEmail(email);
   let user = await getUserByEmail(email);
   let upcoming = user.upcomingReservations;
 
@@ -314,7 +314,7 @@ const getUpcoming = async (email) => {
 // update previous reservations by moving past upcoming reservations to previous
 const updateReservations = async (email) => {
   // get upcoming reservations
-  helpers.validEmail(email);
+  email = helpers.validEmail(email);
   let upcoming = await getUpcoming(email);
 
   // get user
@@ -482,7 +482,7 @@ const checkedIn = async (email) => {
 };
 
 const getVisibility = async (email) => {
-  helpers.validEmail(email);
+  email = helpers.validEmail(email);
   let user = await getUserByEmail(email);
   return user.visible;
 };
@@ -498,7 +498,7 @@ const updateHotspots = async (fullDate, location, startTime, endTime) => {
   const hotspotsCollection = await hotspots();
   let hotspotsDay = await hotspotsCollection.findOne({ day: day });
   let registeredAverage =
-    location === "UCC"
+    location === "ucc"
       ? hotspotsDay.registeredAverageUCC
       : hotspotsDay.registeredAverageSCH;
 
@@ -524,7 +524,7 @@ const updateHotspots = async (fullDate, location, startTime, endTime) => {
   //     registeredAverage[startDate.getHours()-8]++;
   //     registeredAverage[endDate.getHours()-9]++;
   // }
-  if (location === "UCC") {
+  if (location === "ucc") {
     const updatedAverage = await hotspotsCollection.updateOne(
       { day: day },
       { $set: { registeredAverageUCC: registeredAverage } }
@@ -560,7 +560,7 @@ const updateCurrentRegistered = async (
     const hotspotsCollection = await hotspots();
     let hotspotsDay = await hotspotsCollection.findOne({ day: day });
     let registeredAverage =
-      location === "UCC"
+      location === "ucc"
         ? hotspotsDay.currentRegisteredUCC
         : hotspotsDay.currentRegisteredSCH;
 
@@ -579,7 +579,7 @@ const updateCurrentRegistered = async (
       registeredAverage[startDate.getHours() - 8]++;
       registeredAverage[endDate.getHours() - 8]++;
     }
-    if (location === "UCC") {
+    if (location === "ucc") {
       const updatedAverage = await hotspotsCollection.updateOne(
         { day: day },
         { $set: { currentRegisteredUCC: registeredAverage } }
@@ -610,7 +610,7 @@ const updateCurrentRegisteredDemo = async (
   const hotspotsCollection = await hotspots();
   let hotspotsDay = await hotspotsCollection.findOne({ day: day });
   let registeredAverage =
-    location === "UCC"
+    location === "ucc"
       ? hotspotsDay.currentRegisteredUCC
       : hotspotsDay.currentRegisteredSCH;
 
@@ -629,7 +629,7 @@ const updateCurrentRegisteredDemo = async (
     registeredAverage[startDate.getHours() - 8]++;
     registeredAverage[endDate.getHours() - 8]++;
   }
-  if (location === "UCC") {
+  if (location === "ucc") {
     const updatedAverage = await hotspotsCollection.updateOne(
       { day: day },
       { $set: { currentRegisteredUCC: registeredAverage } }
@@ -645,7 +645,7 @@ const updateCurrentRegisteredDemo = async (
 //returns an array of total registered number of students per hour
 const getHotspots = async (day, location) => {
   const hotspotsCollection = await hotspots();
-  if (location === "UCC") {
+  if (location === "ucc") {
     const dayObject = await hotspotsCollection.findOne({ day: day });
     return dayObject.registeredAverageUCC;
   } else {
@@ -726,7 +726,7 @@ const getCurrentRegisteredArray = async (day, location) => {
   const hotspotsCollection = await hotspots();
   let hotspotsDay = await hotspotsCollection.findOne({ day: day });
   let currentRegistered =
-    location === "UCC"
+    location === "ucc"
       ? hotspotsDay.currentRegisteredUCC
       : hotspotsDay.currentRegisteredSCH;
   return currentRegistered;
