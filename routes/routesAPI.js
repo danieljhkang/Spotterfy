@@ -282,6 +282,79 @@ router.route("/homepage").get(async (req, res) => {
   name = firstLetter + remainingLetters;
 
   // update user's reservations
+  let update = await userData.updateReservations(email);
+
+  //For displaying the user's visibilty statement on the homepage
+  let userVisibility = await userData.getVisibility(email);
+  let visibilityView = userVisibility ? "Public" : "Private";
+
+  let options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  let dateFormat = new Date().toLocaleDateString("en-US", options);
+  let visibleUsers = await userData.getVisibleUsers();
+
+  // display user's upcoming reservations
+  let userReservations = await userData.getUpcoming(email);
+
+  // pull data from mongo for the best and worst times to reserve
+  let dateArray = dateFormat.split(",");
+  let totalArrayUCC = await userData.getHotspots(dateArray[0], "UCC");
+  let totalArraySCH = await userData.getHotspots(dateArray[0], "Schaefer");
+
+  let bestArrayUCC = await userData.getBestArray(totalArrayUCC);
+  let worstArrayUCC = await userData.getWorstArray(totalArrayUCC);
+  let bestArraySCH = await userData.getBestArray(totalArraySCH);
+  let worstArraySCH = await userData.getWorstArray(totalArraySCH);
+
+  //making them into strings so they can be displayed on the html properly
+  let bestUCC = bestArrayUCC[0] + " and " + bestArrayUCC[1];
+  let worstUCC = worstArrayUCC[0] + " and " + worstArrayUCC[1];
+  let bestSCH = bestArraySCH[0] + " and " + bestArraySCH[1];
+  let worstSCH = worstArraySCH[0] + " and " + worstArraySCH[1];
+
+  let day = dateFormat.substring(0, dateFormat.indexOf(","));
+  let currentRegisteredArrayUCC = await userData.getCurrentRegisteredArray(
+    day,
+    "UCC"
+  );
+  let currentRegisteredArraySCH = await userData.getCurrentRegisteredArray(
+    day,
+    "SCH"
+  );
+
+  let timeToCheckIn = await userData.timeToCheckIn(email);
+
+  res.render("homepage", {
+    title: "Spotterfy",
+    user_name: name,
+    date: dateFormat,
+    visibleUsers: visibleUsers,
+    usersWorkingOut: visibleUsers.length,
+    userVisibility: visibilityView,
+    userReservations: userReservations,
+    bestTimesUCC: bestUCC,
+    worstTimesUCC: worstUCC,
+    bestTimesSCH: bestSCH,
+    worstTimesSCH: worstSCH,
+    todaysReservationsArrayUCC: currentRegisteredArrayUCC,
+    todaysReservationsArraySCH: currentRegisteredArraySCH,
+  });
+});
+
+router.route("/homepage").post(async (req, res) => {
+  const updatedData = await userData.checkedIn(req.session.user.email);
+  //get user first name
+  let email = req.session.user.email;
+  let name = await userData.getFirstName(email);
+  let firstLetter = name.charAt(0).toUpperCase();
+  let remainingLetters = name.slice(1);
+  name = firstLetter + remainingLetters;
+
+  // update user's reservations
   let updateReservations = await userData.updateReservations(email);
 
   //For displaying the user's visibilty statement on the homepage
@@ -345,11 +418,14 @@ router.route("/homepage").get(async (req, res) => {
   });
 });
 
-// unfinished ajax post request
-router.route("/homepage/checked/:id").post(async (req, res) => {
-  const updatedData = userData.checkedIn(req.session.user.email, req.params.id);
-  res.render("partials/upcoming", { layout: null, ...updatedData });
-});
+// unfinished ajax request
+// router.route("/homepage/checked/:id").post(async (req, res) => {
+//   const updatedData = await userData.checkedIn(
+//     req.session.user.email,
+//     req.params.id
+//   );
+//   response.render("partials/upcoming", { layout: null, ...updatedData });
+// });
 
 router.route("/logout").get(async (req, res) => {
   //code here for GET

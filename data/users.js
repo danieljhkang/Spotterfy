@@ -322,11 +322,11 @@ const updateReservations = async (email) => {
 
   // get current date
   let todayDate = new Date();
-//   let year = d.getFullYear();
-//   let fullDate = (d.getDate() < 10 ? "0" : "") + d.getDate();
-//   let month = d.getMonth();
-//   let currentDate = `${year}/${month + 1}/${fullDate}`;
-//   const today = new Date(currentDate).getTime();
+  //   let year = d.getFullYear();
+  //   let fullDate = (d.getDate() < 10 ? "0" : "") + d.getDate();
+  //   let month = d.getMonth();
+  //   let currentDate = `${year}/${month + 1}/${fullDate}`;
+  //   const today = new Date(currentDate).getTime();
 
   // initialize upcoming and previous reservations
   const updateUpcoming = user.upcomingReservations;
@@ -334,13 +334,13 @@ const updateReservations = async (email) => {
 
   upcoming.forEach((res) => {
     // Need date formatted with slash because Date object is finnicky with hyphen dates
-    let dateWithSlash = res.date.replace(/-/g, '\/');
+    let dateWithSlash = res.date.replace(/-/g, "/");
     let resDate = new Date(`${dateWithSlash} ${res.endTime}`);
     // If reservation has passed, move into previous reservations
     if (resDate < todayDate) {
-        updatePrevious.push(res);
-        index = updateUpcoming.indexOf(res);
-        updateUpcoming.splice(index, 1);
+      updatePrevious.push(res);
+      index = updateUpcoming.indexOf(res);
+      updateUpcoming.splice(index, 1);
     }
 
     // if current date but before current time, remove from upcoming and add previous
@@ -352,7 +352,7 @@ const updateReservations = async (email) => {
     // let splitTime = endTime.split(":");
     // let endHour = parseInt(splitTime[0]);
     // let endMin = parseInt(splitTime[1]);
-    
+
     // if (
     //   resDate == today &&
     //   (endHour < hourNow || (endHour === hourNow && endMin < minNow))
@@ -412,8 +412,7 @@ const timeToCheckIn = async (email) => {
   if (
     nextRes.date === currentDate &&
     (startHour <= hourNow || endHour >= hourNow) &&
-    timeDiff <= 10 &&
-    timeDiff >= -10 &&
+    (timeDiff <= 10 || timeDiff <= -50) &&
     resTime >= timeNow
   ) {
     itTime = true;
@@ -457,27 +456,29 @@ const getReservationById = async (id) => {
 };
 
 // mark reservation as checked in and return updated reservation
-const checkedIn = async (email, id) => {
-  const res = await getReservationById(id);
+const checkedIn = async (email) => {
+  const upcoming = await getUpcoming(email);
+  const nextRes = upcoming[0];
+  // const nextRes = await getReservationById(id);
   const userCollection = await users();
 
-  if (res.checked) throw "Reservation already checked in";
+  if (nextRes.checked) throw "Reservation already checked in";
 
   const updatedInfo = await userCollection.updateOne(
     {
       email: email,
-      upcomingReservations: { $elemMatch: { _id: ObjectId(id) } },
+      upcomingReservations: nextRes,
     },
-    { $set: { "upcomingReservations.$.checked": true } }
+    { $set: { "upcomingReservations.0.checked": true } }
   );
 
   if (updatedInfo.modifiedCount === 0) {
     throw "could not update visibility successfully";
   }
 
-  const update = await getReservationById(id);
+  const update = await getUpcoming(email);
 
-  return update;
+  return update[0];
 };
 
 const getVisibility = async (email) => {

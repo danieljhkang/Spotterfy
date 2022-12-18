@@ -4,11 +4,24 @@
             <h2>Hello, {{user_name}}</h2>
             <p>Today is {{date}}</p>
             <p>Current Mode : {{userVisibility}}</p>
-            <div id="user-reservations">
                 <h3>Upcoming Reservations:</h3>
+            <div id="user-reservations">
                 {{#if userReservations}}
                     {{#each userReservations}}
-                        {{> upcoming}}
+                        <p id="reservation">{{date}}: {{startTime}} - {{endTime}} ({{location}})</p>
+                        {{#if workouts}}
+                            <p>{{workouts}}</p>
+                        {{/if}}    
+                        {{!-- {{> upcoming}}                 --}}
+                        {{#if timeToCheckIn}}
+                            {{#if checked}}
+                                <em>Checked In!</em>
+                            {{else}}
+                                <form method="POST" action="/homepage">
+                                    <button type="submit" class="checkIn" data-id="{{_id}}">Check In</button>
+                                </form>
+                            {{/if}}
+                        {{/if}}
                     {{/each}}
                     {{else}}
                         <p>No reservations for today</p>
@@ -22,7 +35,7 @@
         </div>
         <div class="visible-users">
             {{#if usersWorkingOut}}
-                <h2>Who's Working Out Today?</h2>
+                <h2>Today's Gym Rats</h2>
             {{else}}
                 <h3>NO PUBLIC USERS WORKING OUT</h3>
             {{/if}}

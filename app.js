@@ -4,14 +4,44 @@ const configRoutes = require("./routes");
 const exphbs = require("express-handlebars");
 const session = require("express-session");
 const public = express.static(__dirname + "/public");
+const Handlebars = require("handlebars");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const handlebarsInstance = exphbs.create({
+  defaultLayout: "main",
+  // Specify helpers which are only registered on this instance.
+  helpers: {
+    asJSON: (obj, spacing) => {
+      if (typeof spacing === "number")
+        return new Handlebars.SafeString(JSON.stringify(obj, null, spacing));
+
+      return new Handlebars.SafeString(JSON.stringify(obj));
+    },
+  },
+  partialsDir: ["views/partials/"],
+});
+
+const rewriteUnsupportedBrowserMethods = (req, res, next) => {
+  // If the user posts to the server with a property called _method, rewrite the request's method
+  // To be that method; so if they post _method=PUT you can now allow browsers to POST to a route that gets
+  // rewritten in this middleware to a PUT route
+  if (req.body && req.body._method) {
+    req.method = req.body._method;
+    delete req.body._method;
+  }
+
+  // let the next middleware run:
+  next();
+};
+
 app.use("/public", public);
 
 app.engine("handlebars", exphbs.engine({ defaultLayout: "main" }));
+app.engine("handlebars", handlebarsInstance.engine);
 app.set("view engine", "handlebars");
+app.use(rewriteUnsupportedBrowserMethods);
 
 app.use(
   session({
@@ -24,7 +54,9 @@ app.use(
 
 app.use("/profile", (req, res, next) => {
   if (!req.session.user) {
-    res.status(403).render("forbidden", {title: "Spotterfy", layout: "nonav"});
+    res
+      .status(403)
+      .render("forbidden", { title: "Spotterfy", layout: "nonav" });
     return;
   } else {
     next();
@@ -33,7 +65,9 @@ app.use("/profile", (req, res, next) => {
 
 app.use("/homepage", (req, res, next) => {
   if (!req.session.user) {
-    res.status(403).render("forbidden", {title: "Spotterfy", layout: "nonav"});
+    res
+      .status(403)
+      .render("forbidden", { title: "Spotterfy", layout: "nonav" });
     return;
   } else {
     next();
@@ -42,7 +76,9 @@ app.use("/homepage", (req, res, next) => {
 
 app.use("/reserve", (req, res, next) => {
   if (!req.session.user) {
-    res.status(403).render("forbidden", {title: "Spotterfy", layout: "nonav"});
+    res
+      .status(403)
+      .render("forbidden", { title: "Spotterfy", layout: "nonav" });
     return;
   } else {
     next();
@@ -81,58 +117,58 @@ const main = async () => {
     await hotspotsCollection.insertOne({
       day: "Sunday",
       weeksPast: 0,
-      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      registeredAverageSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     });
     await hotspotsCollection.insertOne({
       day: "Monday",
       weeksPast: 0,
-      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      registeredAverageSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     });
     await hotspotsCollection.insertOne({
       day: "Tuesday",
       weeksPast: 0,
-      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      registeredAverageSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     });
     await hotspotsCollection.insertOne({
       day: "Wednesday",
       weeksPast: 0,
-      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      registeredAverageSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     });
     await hotspotsCollection.insertOne({
       day: "Thursday",
       weeksPast: 0,
-      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      registeredAverageSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     });
     await hotspotsCollection.insertOne({
       day: "Friday",
       weeksPast: 0,
-      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      registeredAverageSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     });
     await hotspotsCollection.insertOne({
       day: "Saturday",
       weeksPast: 0,
-      registeredAverageUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredUCC: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      registeredAverageSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      currentRegisteredSCH: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      registeredAverageUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredUCC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      registeredAverageSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      currentRegisteredSCH: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     });
   }
   // try{

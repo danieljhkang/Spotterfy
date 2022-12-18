@@ -2,7 +2,7 @@
   var userReservations = $("#user-reservations");
 
   function bindEventsToReservation(reservation) {
-    reservation.find(".checkIn").on("click", function (event) {
+    reservation.on("click", ".checkIn", function (event) {
       event.preventDefault();
       var currentLink = $(this);
       var currentId = currentLink.data("_id");
