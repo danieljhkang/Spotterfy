@@ -148,12 +148,12 @@ let validReservation = (fullDate, startTime, endTime, location, workouts) => {
         calisthenics: "Calisthenics",
         yoga: "Yoga",
         other: "Other",
-        none: "No workouts listed"
+        none: "None"
     }
     for (let i = 0; i < workouts.length; i++) {
         lowercaseStr = validString(workouts[i], "Workout");
-        if (validWorkouts[workouts[i]] === undefined) throw `\"${workouts[i]}\" is not a valid workout`;
-        workouts[i] = validWorkouts(lowercaseStr);
+        if (validWorkouts[lowercaseStr] === undefined) throw `\"${workouts[i]}\" is not a valid workout`;
+        workouts[i] = validWorkouts[lowercaseStr];
     }
 
     // Check if inputs are in the correct format
@@ -167,10 +167,10 @@ let validReservation = (fullDate, startTime, endTime, location, workouts) => {
 
     // Check if date and time is valid
     let currDate = new Date();
+    let currDateAtMidnight = new Date(currDate.toDateString());
     currDateAtMidnight.setHours(0,0,0);
     // Need to replace hyphens with forward slash cause JS Date object is weird
-    fullDate = fullDate.replace(/-/g, "\/");
-    let reservationDate = new Date(fullDate);
+    let reservationDate = new Date(fullDate.replace(/-/g, '\/'));
     
     // Check if the date is valid
     if (reservationDate < currDateAtMidnight) throw "Reservation date is invalid";
