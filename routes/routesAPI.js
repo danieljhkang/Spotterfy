@@ -309,8 +309,8 @@ router.route("/homepage").get(async (req, res) => {
 
   // pull data from mongo for the best and worst times to reserve
   let dateArray = dateFormat.split(",");
-  let totalArrayUCC = await userData.getHotspots(dateArray[0], "UCC");
-  let totalArraySCH = await userData.getHotspots(dateArray[0], "Schaefer");
+  let totalArrayUCC = await userData.getHotspots(dateArray[0], "ucc");
+  let totalArraySCH = await userData.getHotspots(dateArray[0], "schaefer");
 
   let bestArrayUCC = await userData.getBestArray(totalArrayUCC);
   let worstArrayUCC = await userData.getWorstArray(totalArrayUCC);
@@ -326,11 +326,11 @@ router.route("/homepage").get(async (req, res) => {
   let day = dateFormat.substring(0, dateFormat.indexOf(","));
   let currentRegisteredArrayUCC = await userData.getCurrentRegisteredArray(
     day,
-    "UCC"
+    "ucc"
   );
   let currentRegisteredArraySCH = await userData.getCurrentRegisteredArray(
     day,
-    "SCH"
+    "sch"
   );
 
   let timeToCheckIn = await userData.timeToCheckIn(email);
@@ -382,8 +382,8 @@ router.route("/homepage").post(async (req, res) => {
 
   // pull data from mongo for the best and worst times to reserve
   let dateArray = dateFormat.split(",");
-  let totalArrayUCC = await userData.getHotspots(dateArray[0], "UCC");
-  let totalArraySCH = await userData.getHotspots(dateArray[0], "Schaefer");
+  let totalArrayUCC = await userData.getHotspots(dateArray[0], "ucc");
+  let totalArraySCH = await userData.getHotspots(dateArray[0], "schaefer");
 
   let bestArrayUCC = await userData.getBestArray(totalArrayUCC);
   let worstArrayUCC = await userData.getWorstArray(totalArrayUCC);
@@ -396,14 +396,15 @@ router.route("/homepage").post(async (req, res) => {
   let bestSCH = bestArraySCH[0] + " and " + bestArraySCH[1];
   let worstSCH = worstArraySCH[0] + " and " + worstArraySCH[1];
 
+
   let day = dateFormat.substring(0, dateFormat.indexOf(","));
   let currentRegisteredArrayUCC = await userData.getCurrentRegisteredArray(
     day,
-    "UCC"
+    "ucc"
   );
   let currentRegisteredArraySCH = await userData.getCurrentRegisteredArray(
     day,
-    "SCH"
+    "sch"
   );
 
   let timeToCheckIn = await userData.timeToCheckIn(email);

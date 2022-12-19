@@ -104,7 +104,7 @@ const main = async() => {
         today,
         "8:00 AM",
         "10:00 AM",
-        "Schaefer",
+        "schaefer",
         ["Chest","Abs"]
     );
     const reservation2 = await users.createReservationDemo(
@@ -112,7 +112,7 @@ const main = async() => {
         today,
         "9:00 AM",
         "10:00 AM",
-        "Schaefer",
+        "schaefer",
         ["Chest","Abs"]
     );
     const reservation3 = await users.createReservationDemo(
@@ -120,7 +120,7 @@ const main = async() => {
         today,
         "10:00 AM",
         "11:20 AM",
-        "Schaefer",
+        "schaefer",
         ["Chest","Abs"]
     );
     const reservation4 = await users.createReservationDemo(
@@ -128,7 +128,7 @@ const main = async() => {
         today,
         "12:00 PM",
         "2:00 PM",
-        "Schaefer",
+        "schaefer",
         ["Chest","Abs"]
     );
     const reservation5 = await users.createReservationDemo(
@@ -136,7 +136,7 @@ const main = async() => {
         today,
         "12:20 PM",
         "1:20 PM",
-        "Schaefer",
+        "schaefer",
         ["Chest","Abs"]
     );
     const reservation6 = await users.createReservationDemo(
@@ -144,7 +144,7 @@ const main = async() => {
         today,
         "1:00 PM",
         "3:00 PM",
-        "Schaefer",
+        "schaefer",
         ["Chest","Abs"]
     );
     const reservation7 = await users.createReservationDemo(
@@ -152,7 +152,7 @@ const main = async() => {
         today,
         "3:00 PM",
         "5:00 PM",
-        "Schaefer",
+        "schaefer",
         ["Chest","Abs"]
     );
     const reservation8 = await users.createReservationDemo(
@@ -160,7 +160,7 @@ const main = async() => {
         today,
         "3:20 PM",
         "5:20 PM",
-        "Schaefer",
+        "schaefer",
         ["Chest","Abs"]
     );
     const reservation9 = await users.createReservationDemo(
@@ -168,7 +168,7 @@ const main = async() => {
         today,
         "6:00 PM",
         "8:00 PM",
-        "Schaefer",
+        "schaefer",
         ["Chest","Abs"]
     );
     const reservation10 = await users.createReservationDemo(
@@ -176,7 +176,7 @@ const main = async() => {
         today,
         "8:00 PM",
         "10:00 PM",
-        "Schaefer",
+        "schaefer",
         ["Chest","Abs"]
     );
     const reservation11 = await users.createReservationDemo(
@@ -184,7 +184,7 @@ const main = async() => {
         today,
         "8:00 AM",
         "10:00 AM",
-        "UCC",
+        "ucc",
         ["Chest","Abs"]
     );
     const reservation12 = await users.createReservationDemo(
@@ -192,7 +192,7 @@ const main = async() => {
         today,
         "9:00 AM",
         "11:00 AM",
-        "UCC",
+        "ucc",
         ["Chest","Abs"]
     );
     const reservation13 = await users.createReservationDemo(
@@ -200,7 +200,7 @@ const main = async() => {
         today,
         "10:00 AM",
         "11:00 AM",
-        "UCC",
+        "ucc",
         ["Chest","Abs"]
     );
     const reservation14 = await users.createReservationDemo(
@@ -208,7 +208,7 @@ const main = async() => {
         today,
         "10:20 AM",
         "12:20 PM",
-        "UCC",
+        "ucc",
         ["Chest","Abs"]
     );
     const reservation15 = await users.createReservationDemo(
@@ -216,7 +216,7 @@ const main = async() => {
         today,
         "11:00 AM",
         "1:00 PM",
-        "UCC",
+        "ucc",
         ["Chest","Abs"]
     );
     const reservation16 = await users.createReservationDemo(
@@ -224,7 +224,7 @@ const main = async() => {
         today,
         "1:00 PM",
         "3:00 PM",
-        "UCC",
+        "ucc",
         ["Chest","Abs"]
     );
     const reservation17 = await users.createReservationDemo(
@@ -232,7 +232,7 @@ const main = async() => {
         today,
         "2:00 PM",
         "4:00 PM",
-        "UCC",
+        "ucc",
         ["Chest","Abs"]
     );
     const reservation18 = await users.createReservationDemo(
@@ -240,7 +240,7 @@ const main = async() => {
         today,
         "5:00 PM",
         "7:00 PM",
-        "UCC",
+        "ucc",
         ["Chest","Abs"]
     );
     const reservation19 = await users.createReservationDemo(
@@ -248,7 +248,7 @@ const main = async() => {
         today,
         "7:00 PM",
         "9:00 PM",
-        "UCC",
+        "ucc",
         ["Chest","Abs"]
     );
     const reservation20 = await users.createReservationDemo(
@@ -256,7 +256,7 @@ const main = async() => {
         today,
         "9:00 PM",
         "10:40 PM",
-        "UCC",
+        "ucc",
         ["Chest","Abs"]
     );
 

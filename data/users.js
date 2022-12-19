@@ -146,8 +146,8 @@ const createReservationDemo = async (
     { email: userEmail },
     { projection: { _id: 0, upcomingReservations: 1 } }
   );
-  let startDate = new Date(`${fullDate.replace(/-/g, "/")} ${startTime}`);
-  let endDate = new Date(`${fullDate.replace(/-/g, "/")} ${endTime}`);
+  let startDate = new Date(`${fullDate.replace(/-/g, "\/")} ${startTime}`);
+  let endDate = new Date(`${fullDate.replace(/-/g, "\/")} ${endTime}`);
   let totalReservationTime = endDate - startDate;
   const twoHoursInMilliseconds = 7200000;
   let findMatchingReservation =
@@ -155,10 +155,10 @@ const createReservationDemo = async (
       // If the new reservation times INTERSECT with any existing reservation times
       if (fullDate === reservation.date) {
         let existingStart = new Date(
-          `${reservation.date.replace(/-/g, "/")} ${reservation.startTime}`
+          `${reservation.date.replace(/-/g, "\/")} ${reservation.startTime}`
         );
         let existingEnd = new Date(
-          `${reservation.date.replace(/-/g, "/")} ${reservation.endTime}`
+          `${reservation.date.replace(/-/g, "\/")} ${reservation.endTime}`
         );
         totalReservationTime += endDate - startDate;
         if (existingStart <= startDate && startDate < existingEnd) return true;
@@ -547,11 +547,11 @@ const updateCurrentRegistered = async (
   let year = d.getFullYear();
   let date = (d.getDate() < 10 ? "0" : "") + d.getDate();
   let month = d.getMonth();
-  let currentDate = `${year}/${month + 1}/${date}`;
+  let currentDate = `${year}-${month + 1}-${date}`;
 
   if (fullDate === currentDate) {
-    let startDate = new Date(`${fullDate} ${startTime}`);
-    let endDate = new Date(`${fullDate} ${endTime}`);
+    let startDate = new Date(`${fullDate.replace(/-/g, '\/')} ${startTime}`);
+    let endDate = new Date(`${fullDate.replace(/-/g, '\/')} ${endTime}`);
     const day = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
       startDate
     );
