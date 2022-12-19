@@ -13,6 +13,24 @@ let validUsername = (username) => {
   username = username.trim().toLowerCase();
   if (username.length < 4 || !/^[A-Za-z0-9]*$/.test(username))
     throw "Username must be alphanumeric and at least 4 characters";
+  
+    let isOnlyNum = /^\d+$/.test(username);
+    if(isOnlyNum){
+      throw "Username must contain characters";
+    }
+  return username;
+};
+
+let validName = (username) => {
+  // username must be supplied
+  if (!username) throw "Please provide a user name";
+  // username should be a valid string (no empty spaces, no spaces in username and only alphanumeric characters)
+  if (typeof username !== "string" || username.trim().length === 0)
+    throw "User name must be a non-empty string";
+  username = username.trim().toLowerCase();
+  if (username.length < 2 || !/^[A-Za-z]*$/.test(username))
+    throw "User name must be only letters and at least 2 characters";
+  return username;
 };
 
 // check email
@@ -226,6 +244,7 @@ let getTimesLists = () => {
 
 module.exports = {
   validUsername,
+  validName,
   validEmail,
   validPW,
   validCWID,

@@ -11,8 +11,8 @@ const saltRounds = 10;
 //creates a user and adds it to the mongo database, SETS VISIBILITY TO TRUE BY DEFAULT
 const createUser = async (firstName, lastName, email, cwid, year, password) => {
   // check user input
-  firstName = helpers.validString(firstName, "First name");
-  lastName = helpers.validString(lastName, "Last name");
+  firstName = helpers.validName(firstName, "First name");
+  lastName = helpers.validName(lastName, "Last name");
   email = helpers.validEmail(email, "Email");
   helpers.validCWID(cwid);
   year = helpers.validString(year, "Class year");
