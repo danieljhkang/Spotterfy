@@ -1,5 +1,8 @@
 # Spotterfy
 
+Github Repository : 
+https://github.com/danieljhkang/Spotterfy
+
 A project by Rohan Balani, Daniel Kang, Ryan Lee, and Ken Yun
 
 Project : Upgraded Stevens Gym Website (Stevens Spotter-fy)
