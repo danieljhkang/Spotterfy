@@ -172,8 +172,8 @@ const main = async () => {
     });
   }
   // try{
-  //   var c = await usersData.getNumberofReservationsStatus("rbalani@stevens.edu", true);
-  //   console.log(c)
+  //   var c = await usersData.getVisibleUsers();
+  //   // console.log(c)
   // }catch(e)
   // {
   //   console.log(e)

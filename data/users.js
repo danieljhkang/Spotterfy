@@ -73,6 +73,8 @@ const createReservation = async (
     workouts
   );
 
+  fullDate = fullDate.replace(/-/g, "/");
+
   // If a reservation in the same time frame already exists, it is invalid
   const usersCollection = await users();
   const userReservations = await usersCollection.findOne(
@@ -390,7 +392,7 @@ const timeToCheckIn = async (email) => {
   let resTime = helpers.convertTimeToMilitary(nextRes.startTime);
   let splitTime = resTime.split(":");
   const startHour = parseInt(splitTime[0]);
-  const startMin = parseInt(splitTime[1]);
+  let startMin = parseInt(splitTime[1]);
   resTime = helpers.convertTimeToMilitary(nextRes.endTime);
   splitTime = resTime.split(":");
   const endHour = parseInt(splitTime[0]);
@@ -404,15 +406,18 @@ const timeToCheckIn = async (email) => {
 
   let hourNow = d.getHours();
   let minNow = d.getMinutes();
+  if(startMin === 0)
+    startMin = 60;
 
   let timeDiff = startMin - minNow;
+  // console.log(timeDiff)
 
   let timeNow = hourNow + ":" + minNow;
 
   if (
     nextRes.date === currentDate &&
     (startHour <= hourNow || endHour >= hourNow) &&
-    (timeDiff <= 10 || timeDiff <= -50) &&
+    (timeDiff <= 10) &&
     resTime >= timeNow
   ) {
     itTime = true;
@@ -547,7 +552,7 @@ const updateCurrentRegistered = async (
   let year = d.getFullYear();
   let date = (d.getDate() < 10 ? "0" : "") + d.getDate();
   let month = d.getMonth();
-  let currentDate = `${year}-${month + 1}-${date}`;
+  let currentDate = `${year}/${month + 1}/${date}`;
 
   if (fullDate === currentDate) {
     let startDate = new Date(`${fullDate.replace(/-/g, '\/')} ${startTime}`);

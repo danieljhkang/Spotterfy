@@ -126,7 +126,7 @@ router
   .get(async (req, res) => {
     //code here for GET
     // get user info by email
-    let email = req.session.user.email;
+    let email = helpers.validEmail(req.session.user.email);
     let user = await userData.getUserByEmail(email);
 
     // get full name
@@ -160,7 +160,7 @@ router
   })
   .post(async (req, res) => {
     // switch visibility
-    let email = req.session.user.email;
+    let email = helpers.validEmail(req.session.user.email);
     try {
       let visibility = await userData.switchVisibility(email);
     } catch (e) {
@@ -219,6 +219,7 @@ router
     });
   })
   .post(async (req, res) => {
+    let email = helpers.validEmail(req.session.user.email);
     // let fullDate = xss(req.body.date);
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -246,7 +247,7 @@ router
         workouts
       );
       var createReservation = await users.createReservation(
-        req.session.user.email,
+        email,
         fullDate,
         startTime,
         endTime,
@@ -282,7 +283,7 @@ router
 router.route("/homepage").get(async (req, res) => {
   //code here for GET
   //get user first name
-  let email = req.session.user.email;
+  let email = helpers.validEmail(req.session.user.email);
   let name = await userData.getFirstName(email);
   let firstLetter = name.charAt(0).toUpperCase();
   let remainingLetters = name.slice(1);
@@ -353,9 +354,9 @@ router.route("/homepage").get(async (req, res) => {
 });
 
 router.route("/homepage").post(async (req, res) => {
-  const updatedData = await userData.checkedIn(req.session.user.email);
+  let email = helpers.validEmail(req.session.user.email);
+  const updatedData = await userData.checkedIn(email);
   //get user first name
-  let email = req.session.user.email;
   let name = await userData.getFirstName(email);
   let firstLetter = name.charAt(0).toUpperCase();
   let remainingLetters = name.slice(1);
